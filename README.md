@@ -2,5 +2,5 @@
 
 A project for university
 
-[x] teste
+[x] teste\n
 [] testes2
