@@ -48,7 +48,9 @@ function MarioKart() {
             "texture": "media/map_2.png",
             "width": 198,
             "height": 374,
-            "collision": [],
+            "collision": [
+            	[72, 60, 59, 241]
+            ],
             "sand":[
             	[0, 0, 198, 10],
             	[0, 10, 14, 354],
@@ -572,7 +574,7 @@ function MarioKart() {
         }
         // decrease speed
         oKart.speed *= 0.9;
-    	if(areia( oKart.x, oKart.y)) oKart.speed *= 0.4 ;
+    	if(areia( oKart.x, oKart.y)) oKart.speed *= 0.5 ;
     }
 
     function ai(oKart) {
