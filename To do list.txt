@@ -8,6 +8,8 @@ Gabriell
 - Entender o mario kart 
 - Fazer nova pista
 - Função desacelerar (feito)
+- Implementar Lap
+- Implementar cronômetro
 
 
 =========GERAL=======
