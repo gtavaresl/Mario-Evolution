@@ -8,8 +8,9 @@ Gabriell
 - Entender o mario kart 
 - Fazer nova pista
 - Função desacelerar (feito)
-- Implementar Lap
+- Implementar Lap (com checkpoint)
 - Implementar cronômetro
+- Obter os dados p/ jogar na rede neural
 
 
 =========GERAL=======
