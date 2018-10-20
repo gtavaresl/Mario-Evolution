@@ -7,7 +7,7 @@ Nicolau
 Gabriell
 - Entender o mario kart 
 - Fazer nova pista
-- Função desacelerar
+- Função desacelerar (feito)
 
 
 =========GERAL=======
