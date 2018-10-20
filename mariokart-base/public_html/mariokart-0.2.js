@@ -15,7 +15,8 @@ function MarioKart() {
                 [368, 4, 140, 76],
                 [4, 436, 236, 72]
             ],
-            "sand":[],
+            "sand":[
+            ],
             "startpositions": [{
                 x: 476,
                 y: 356
@@ -58,15 +59,18 @@ function MarioKart() {
             	[189, 10, 9, 354],
             	[56, 51, 92, 272]
             ],
+            "checkpoint":[
+            	[130, 124, 68, 5]
+            ],
             "startpositions": [{
                 x: 167,
-                y: 257
+                y: 198
             }, {
                 x: 167 - 18,
-                y: 257 - 18
+                y: 196
             }, {
                 x: 167,
-                y: 257 - 24
+                y: 210
             }],
             "startrotation": 180,
             "aipoints": [167,257]
@@ -117,6 +121,7 @@ function MarioKart() {
     var iMapWidth;
     var iMapHeight;
     var oMapImg;
+    //var Lap = 0;
 
     function resetGame(strMap) {
         oMap = oMaps[strMap];
@@ -490,28 +495,33 @@ function MarioKart() {
         oTrees.draw(oPlayer.rotation);
     }
 
+    function check(iX, iY){
+    	for(var i = 0; i < oMap.checkpoint.length; i++) {
+    		var oLine = oMap.checkpoint[i];
+    		if((iX > oLine[0] && iX < oLine[0] + oLine[2]) && (iY > oLine[1] && iY < oLine[1] + oLine[3]) return true;
+    	}
+    	return false;
+    }
+
+    function wall(iX, iY) {
+    	for (var i = 0; i < oMap.collision.length; i++) {
+            var oBox = oMap.collision[i];
+            if ((iX > oBox[0] && iX < oBox[0] + oBox[2])&&(iY > oBox[1] && iY < oBox[1] + oBox[3])) return true;
+        }
+        return false;
+    }
+
     function canMoveTo(iX, iY) {
         if (iX > iMapWidth - 5 || iY > iMapHeight - 5) return false;
-        if (iX < 4 || iY < 4) return false; // condicoes p/ n extrapolar o mapa
-        for (var i = 0; i < oMap.collision.length; i++) {
-            var oBox = oMap.collision[i];
-            if (iX > oBox[0] && iX < oBox[0] + oBox[2]) { // condicoes p/ estar fora da caixa
-                if (iY > oBox[1] && iY < oBox[1] + oBox[3]) {
-                    return false;
-                }
-            }
-        }
+        if (iX < 4 || iY < 4) return false;
+        if(wall(iX, iY) == true) return false;
         return true;
     }
 
     function areia(iX, iY) {
     	for(var i=0; i < oMap.sand.length; i++) {
     		var oBox = oMap.sand[i];
-    		if (iX > oBox[0] && iX < oBox[0] + oBox[2]) { // condicoes p/ estar fora da caixa
-                if (iY > oBox[1] && iY < oBox[1] + oBox[3]) {
-                    return true;
-                }
-            }
+    		if ((iX > oBox[0] && iX < oBox[0] + oBox[2])&&(iY > oBox[1] && iY < oBox[1] + oBox[3]))  return true;
         }
         return false;
     }
@@ -574,7 +584,11 @@ function MarioKart() {
         }
         // decrease speed
         oKart.speed *= 0.9;
-    	if(areia( oKart.x, oKart.y)) oKart.speed *= 0.5 ;
+    	if(areia( oKart.x, oKart.y) == true) oKart.speed *= 0.5 ;
+    	if(check(oKart.x, oKart.y) == true) {
+			oKart.x=0;
+			oKart.y=0;
+    	}
     }
 
     function ai(oKart) {
