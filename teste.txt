@@ -20,6 +20,7 @@ Edson:
 - Entender POO
 - Ver a playlist do flappybird
 - Entender o codigo do jogo (Entender o vetor collision) e fazer outro mapa (quadrado)
+- Criar um github e passar pro Nicolau
  
 Gabriel:
 - Corrigir e fazer funcionar o código q já tava feito
