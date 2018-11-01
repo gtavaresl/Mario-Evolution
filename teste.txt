@@ -1,0 +1,33 @@
+Ideias:
+1 - Colocar todos rodando ao mesmo tempoe exibir a tela de um
+2 - Guardar as informações dos marios num JSON
+3 - O mario morre quando ele bate
+4 - Colocar a foto do simoes no rosto do mario
+
+Para fazer:
+- Pular a tela de seleção de personagem ou escolher so na primera vez X
+- Pular a tela de seleção de mapa ou escolher so na primera vez X
+- Ver se precisamos colocar mais detectores de distancia X
+- Fazer o outro mapa melhor se der tempo
+- Ver como fazer o crossover da rede neural X
+- Ver como gerar varios personagens
+- Ver como guardar as informações dos marios no JSON X
+- Ver como matar os marios (split())
+
+
+Sprint 1 até (05/11):
+Edson:
+- Entender POO
+- Ver a playlist do flappybird
+- Entender o codigo do jogo (Entender o vetor collision) e fazer outro mapa (quadrado)
+ 
+Gabriel:
+- Corrigir e fazer funcionar o código q já tava feito
+- Pular as telas
+
+Nicolau:
+- Ver como fazer o crossover da rede neural
+- Ver como guardar as informações dos marios no JSON 
+- Mandar um email pro simoes
+- Ver se precisamos colocar mais detectores de distancia
+
