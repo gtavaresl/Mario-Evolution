@@ -5,10 +5,6 @@
 //oPlayer.rotation dá o angulo do jogador em graus. Acompanha o eixo y (para baixo), dai para baixo é 0 graus e depois segue o circulo trigonometrico
 //oBox é a caixa dos valores que o carrinho não pode ir, ele pega o vetor collision
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// ERRO ATUAL
-// Ele esta tentando calcular o distanceUP antes de colocar o mario na pista, ai o oPlayer ainda nao esta definido e estaos tentando pegar a coordenada x dele, ai da ruim :(
-
 (function(exports) {
 
 function MarioKart() {
@@ -137,7 +133,7 @@ function MarioKart() {
     var aPlayers = [];
     var oPlayer;
     var strPlayer = "";
-    var playerCount = 2;
+    var playerCount = 1;
     var iStartPos = -1;
     var iMapWidth;
     var iMapHeight;
@@ -174,6 +170,8 @@ function MarioKart() {
         //Esse loop passa por todos os jogadores
         for (var i = 0, l = aPlayers.length; i < l; ++i) {
             ++iStartPos;
+
+
             //Esse é o jogador
             //Declaração do objeto oPlayer
             var p = {
@@ -196,6 +194,7 @@ function MarioKart() {
         }
 
         for (i = 0, l = aCharacters.length; i < l; ++i) {
+            //As IA's ficam com -1 no valor do vetor
             if (aPlayers.indexOf(aCharacters[i]) === -1) {
                 ++iStartPos;
                 //Essas são as IA
@@ -323,6 +322,7 @@ function MarioKart() {
 
     function resetScreen() {
         //Me parece que não passa aqui nenhuma vez
+        console.log('lalalalala');
         fSpriteScale = iScreenScale / 4;
         fLineScale = 1 / iScreenScale * iQuality;
         aStrips = [];
@@ -504,6 +504,11 @@ function MarioKart() {
             console.log('Bottom: ' + distanceBottom());
             console.log('Left: ' + distanceLeft());
             console.log('Right: ' + distanceRight());
+            if (distanceRight() < 2) {
+                console.log('paraaa');
+                //Esse reset nao esta funcionando
+                // resetGame();
+            }
             //O jogador sempre acelera
             // buttonUP();
 
@@ -918,6 +923,13 @@ function MarioKart() {
             oPImg.style.left = (((iWidth - 12 * aCharacters.length) / 2 + i * 12) * iScreenScale) + "px";
             oPImg.style.top = (18 * iScreenScale) + "px";
             oPImg.player = aCharacters[i];
+            
+            //Vamos pular o click do usuario e setar o mario mesmo
+            // strPlayer = "mario";
+            // _self.addPlayer(strPlayer);
+            // _self.emit("playerSelect", strPlayer);
+
+            //ONCLICK!!!
             oPImg.onclick = function() {
                 strPlayer = this.player;
                 _self.addPlayer(strPlayer);
@@ -1002,7 +1014,13 @@ function MarioKart() {
             oStatus.firstChild.nodeValue = msg.toString();
     }
     
+    //Aqui ocorre a chamada da função que coloca a tela de escolha de personagens
     selectPlayerScreen();
+    //Vamos pular essa chamada e setar o mario direto
+    // strPlayer = "mario";
+    // _self.addPlayer(strPlayer);
+    // _self.emit("playerSelect", strPlayer);
+
     
     // multiplayer logic
     this.addPlayer = function(name) {
