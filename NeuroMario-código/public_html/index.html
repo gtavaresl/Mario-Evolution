@@ -3,6 +3,11 @@
     <head>
         <title>Mario Kart!</title>
         <script src="socket.io/socket.io.js"></script>
+        <script language="javascript" type="text/javascript" src="libraries/p5.js"></script>
+        <script language="javascript" type="text/javascript" src="libraries/p5.dom.js"></script>
+        <script language="javascript" type="text/javascript" src="neuralNetwork/matrix.js"></script>
+        <script language="javascript" type="text/javascript" src="neuralNetwork/nn.js"></script>
+        <script language="javascript" type="text/javascript" src="ga.js"></script>
         <script src="mariokart-0.2.js"></script>
         <style type="text/css" media="all"> 
         #mariokartcontainer img {
@@ -16,8 +21,8 @@
         <script src="multiplayer.js"></script>
         <br />Players:
         <select id="players">
-            <option value="1">1</option>
-            <option value="2" selected="selected">2</option>
+            <option value="1" selected="selected">1</option>
+            <option value="2">2</option>
             <option value="3">3</option>
         </select>
         <!--br />Quality:

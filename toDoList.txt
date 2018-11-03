@@ -1,8 +1,9 @@
 Ideias:
-1 - Colocar todos rodando ao mesmo tempoe exibir a tela de um
+1 - Colocar todos rodando ao mesmo tempo e exibir a tela de um só
 2 - Guardar as informações dos marios num JSON
 3 - O mario morre quando ele bate
 4 - Colocar a foto do simoes no rosto do mario
+5 - Fazer um mapa com a rua mais larga
 
 Para fazer:
 - Pular a tela de seleção de personagem ou escolher so na primera vez X
@@ -27,8 +28,16 @@ Gabriel:
 - Pular as telas
 
 Nicolau:
+==============DOING========================
+- Fazer o distanceup ser um metodo do objeto
+- Ver como fazer a roleta da sorte na mating pool
 - Ver como fazer o crossover da rede neural
 - Ver como guardar as informações dos marios no JSON 
-- Mandar um email pro simoes
 - Ver se precisamos colocar mais detectores de distancia
+======================DONE=================
+- Fazer função para detectar a colisão (hit)
+- Confirmar se dar para tirar as funções de ML do nn.js
+- Mandar um email pro simoes para perguntar os detalhes do projeto
+- Criar o brain do mario e usar a rede neural
+
 
