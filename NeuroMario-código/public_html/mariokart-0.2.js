@@ -4,6 +4,9 @@
 //Omap é o objeto que tem o mapa
 //oPlayer.rotation dá o angulo do jogador em graus. Acompanha o eixo y (para baixo), dai para baixo é 0 graus e depois segue o circulo trigonometrico
 //oBox é a caixa dos valores que o carrinho não pode ir, ele pega o vetor collision
+//
+//O oPlayer é o que vai ser printado na tela, então ele fica na ultima passagem
+const numberOfMarios = 10;
 
 (function(exports) {
 
@@ -165,17 +168,21 @@ function MarioKart() {
             // startMusic();
         }
 
-        //Um vetor vazio de karts
+        //Esse será o vetor que armzenará os players, no jogo original ficava com o usuario e as duas IA's
         aKarts = [];
         //Esse loop passa por todos os jogadores
-        for (var i = 0, l = aPlayers.length; i < l; ++i) {
+        // for (var i = 0, l = aPlayers.length; i < l; ++i) {
+        for (var i = 0; i < numberOfMarios; ++i) {
+            //O StartPos é declarado como -1 la em cima
             ++iStartPos;
+            //A cada passada do for nos colocamos o mairo para que todos os jogadores sejam colocados no jogo com a skin do mario
+            aPlayers[i] = 'mario';
 
             //Construtor do objeto oPlayer
             var p = {
                 player: aPlayers[i],
-                x: oMap.startpositions[iStartPos].x,
-                y: oMap.startpositions[iStartPos].y,
+                x: oMap.startpositions[0].x,
+                y: oMap.startpositions[0].y,
                 speed: 0,
                 speedinc: 0,
                 rotation: oMap.startrotation,
@@ -187,6 +194,7 @@ function MarioKart() {
                 brain: new NeuralNetwork(5, 100, 2),
                 //Métodos do objeto
                 think: function() {
+                    // console.log('nn = ',this.brain);
                     let inputs = [];
                     inputs[0] = Math.pow(this.distanceUp(), 2);
                     inputs[1] = Math.pow(this.distanceBottom(), 2);
@@ -195,10 +203,10 @@ function MarioKart() {
                     inputs[4] = this.rotation;
                     let output = this.brain.predict(inputs);
                     if (output[0] > 0.5) {
-                        buttonRight();
+                        this.buttonRight();
                     }
                     if (output[1] > 0.5) {
-                        buttonLeft();
+                        this.buttonLeft();
                     }
                 }, 
 
@@ -297,39 +305,61 @@ function MarioKart() {
                     } else {
                         return false;
                     }
+                },
+
+                // Acceleration function
+                buttonUp: function() {
+                    this.speedinc = 1;
+                },
+
+                //Deceleration function
+                buttonDown :function() {
+                    oPlayer.speedinc -= 0.2;
+                },
+            
+                //Turn right
+                buttonRight :function() {
+                    oPlayer.rotincdir = -1;
+                },
+            
+                //Turn left
+                buttonLeft :function() {
+                    oPlayer.rotincdir = 1;
                 }
+                
             };
 
-            if (aPlayers[i] == strPlayer)
+
+            // if (aPlayers[i] == strPlayer)
                 //O jogador é o oPlayer, aqui que ocorre essa passagem
                 oPlayer = p;
-                //Se adicionar mais vezes o jogador, ele fica mais rápido
+                //Adiciona o objeto que acabamos de criar no vetor de karts que vao para o jogo
                 aKarts.push(p);
         }
 
-        for (i = 0, l = aCharacters.length; i < l; ++i) {
-            //As IA's ficam com -1 no valor do vetor
-            if (aPlayers.indexOf(aCharacters[i]) === -1) {
-                ++iStartPos;
-                //Essas são as IA
-                var oEnemy = {
-                    player: aCharacters[i],
-                    x: oMap.startpositions[iStartPos].x,
-                    y: oMap.startpositions[iStartPos].y,
-                    speed: 0,
-                    speedinc: 0,
-                    rotation: oMap.startrotation,
-                    rotincdir: 0,
-                    rotinc: 0,
-                    sprite: new Sprite(aCharacters[i]),
-                    cpu: true,
-                    aipoint: 0
-                };
+        // for (i = 0, l = aCharacters.length; i < l; ++i) {
+        //     //As IA's ficam com -1 no valor do vetor
+        //     if (aPlayers.indexOf(aCharacters[i]) === -1) {
+        //         ++iStartPos;
+        //         //Essas são as IA
+        //         var oEnemy = {
+        //             player: aCharacters[i],
+        //             x: oMap.startpositions[iStartPos].x,
+        //             y: oMap.startpositions[iStartPos].y,
+        //             speed: 0,
+        //             speedinc: 0,
+        //             rotation: oMap.startrotation,
+        //             rotincdir: 0,
+        //             rotinc: 0,
+        //             sprite: new Sprite(aCharacters[i]),
+        //             cpu: true,
+        //             aipoint: 0
+        //         };
                 
-                //Isso adiciona as IA no jogo
-                // aKarts.push(oEnemy);
-            }
-        }
+        //         //Isso adiciona as IA no jogo
+        //         // aKarts.push(oEnemy);
+        //     }
+        // }
         render();
         bCounting = true;
         var oCount = document.createElement("div");
@@ -436,7 +466,6 @@ function MarioKart() {
 
     function resetScreen() {
         //Me parece que não passa aqui nenhuma vez
-        console.log('lalalalala');
         fSpriteScale = iScreenScale / 4;
         fLineScale = 1 / iScreenScale * iQuality;
         aStrips = [];
@@ -504,6 +533,7 @@ function MarioKart() {
     oViewCanvas.height = iViewCanvasHeight;
 
     function Sprite(strSprite) {
+        // buttonUp();
         var oImg = new Image();
         oImg.style.position = "absolute";
         oImg.style.left = "0px";
@@ -523,20 +553,18 @@ function MarioKart() {
         this.draw = function(iX, iY, fScale) {
 
             //Aqui passa várias vezes
-            oPlayer.think();
-            buttonUP();
-            console.log('Up: ' + oPlayer.distanceUp());
-            console.log('Bottom: ' + oPlayer.distanceBottom());
-            console.log('Left: ' + oPlayer.distanceLeft());
-            console.log('Right: ' + oPlayer.distanceRight());
+            // console.log('Up: ' + oPlayer.distanceUp());
+            // console.log('Bottom: ' + oPlayer.distanceBottom());
+            // console.log('Left: ' + oPlayer.distanceLeft());
+            // console.log('Right: ' + oPlayer.distanceRight());
             if (oPlayer.hit()) {
-                oPlayer.think();
-                console.log('HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIT!!!');
+                // oPlayer.think();
+                // console.log('HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIT!!!');
                 //Esse reset nao esta funcionando
                 // resetGame();
             }
             //O jogador sempre acelera
-            // buttonUP();
+            // buttonUp();
 
 
             var bDraw = true;
@@ -635,7 +663,12 @@ function MarioKart() {
         oViewCanvas.width = oViewCanvas.width;
         
         //Mas aqui passa as infinitas vezes, favor colocar  a função think aqui
-        // oPlayer.think();
+        //Criar um for que passa por todas as posições do aKarts e faz o think em todos eles
+        for (let i=0; i<aKarts.length-1; i++) {
+            console.log(aKarts[i].brain);
+            aKarts[i].buttonUp();
+            aKarts[i].think();
+        }
 
 
         oViewCtx.fillStyle = "green";
@@ -849,24 +882,24 @@ function MarioKart() {
     //Decidi mudar o nome para distanceUp()
 
     //Acceleration function
-    function buttonUP() {
-        oPlayer.speedinc = 1;
-    }
+    // function buttonUp() {
+    //     oPlayer.speedinc = 1;
+    // }
 
     //Deceleration function
-    function buttonDown() {
-        oPlayer.speedinc -= 0.2;
-    }
+    // function buttonDown() {
+    //     oPlayer.speedinc -= 0.2;
+    // }
 
-    //Turn right
-    function buttonRight() {
-        oPlayer.rotincdir = -1;
-    }
+    // //Turn right
+    // function buttonRight() {
+    //     oPlayer.rotincdir = -1;
+    // }
 
-    //Turn left
-    function buttonLeft() {
-        oPlayer.rotincdir = 1;
-    }
+    // //Turn left
+    // function buttonLeft() {
+    //     oPlayer.rotincdir = 1;
+    // }
 
 
 
@@ -875,23 +908,19 @@ function MarioKart() {
         switch (e.keyCode) {
             case 38:
                 // up
-                // oPlayer.speedinc = 1;
-                buttonUP();
+                oPlayer.buttonUp();
                 break;
             case 37:
                 // left
-                // oPlayer.rotincdir = 1;
-                buttonLeft();
+                oPlayer.buttonLeft();
                 break;
             case 39:
                 // right
-                // oPlayer.rotincdir = -1;
-                buttonRight();
+                oPlayer.buttonRight();
                 break;
             case 40:
                 // down
-                // oPlayer.speedinc -= 0.2;
-                buttonDown();
+                oPlayer.buttonDown();
                 break;
         }
         _self.emit("playerMove", oPlayer);

@@ -29,15 +29,20 @@ Gabriel:
 
 Nicolau:
 ==============DOING========================
-- Fazer o distanceup ser um metodo do objeto
+!!!!!POR ALGUM MOTIVO ELES NAO ESTAO PENSANDO (THINKING), SO ACELERANDO, na vdd a função esta sendo chamada e as redes neurais estao diferentes, mas estao agindo iguais e nao estao virando, so acelerando
+--> Ir na linha 666 e fazer um for colocando todos para pensar (think)
 - Ver como fazer a roleta da sorte na mating pool
 - Ver como fazer o crossover da rede neural
 - Ver como guardar as informações dos marios no JSON 
 - Ver se precisamos colocar mais detectores de distancia
 ======================DONE=================
+--> Fazer as skins deles aparecerem no jogo DONE
+--> Colocar uma nn em cada um depois de colocar as skins DONE
+--> Colocar os buttons como metodos DONE
 - Fazer função para detectar a colisão (hit)
 - Confirmar se dar para tirar as funções de ML do nn.js
 - Mandar um email pro simoes para perguntar os detalhes do projeto
 - Criar o brain do mario e usar a rede neural
+- Fazer o distanceup ser um metodo do objeto
 
 
