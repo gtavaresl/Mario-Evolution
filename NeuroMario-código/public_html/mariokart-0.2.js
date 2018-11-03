@@ -6,7 +6,10 @@
 //oBox é a caixa dos valores que o carrinho não pode ir, ele pega o vetor collision
 //
 //O oPlayer é o que vai ser printado na tela, então ele fica na ultima passagem
-const numberOfMarios = 10;
+const numberOfMarios = 5;
+const imgHeight = 374;
+const imgWidth = 198;
+var cont = 0;
 
 (function(exports) {
 
@@ -191,10 +194,9 @@ function MarioKart() {
                 sprite: new Sprite(aPlayers[i]),
                 cpu: false,
                 //Criação do cérebro do mario
-                brain: new NeuralNetwork(5, 100, 2),
+                brain: new NeuralNetwork(5, 100, 1),
                 //Métodos do objeto
-                think: function() {
-                    // console.log('nn = ',this.brain);
+                think: function(number) {
                     let inputs = [];
                     inputs[0] = Math.pow(this.distanceUp(), 2);
                     inputs[1] = Math.pow(this.distanceBottom(), 2);
@@ -205,7 +207,7 @@ function MarioKart() {
                     if (output[0] > 0.5) {
                         this.buttonRight();
                     }
-                    if (output[1] > 0.5) {
+                    if (output[0] < 0.5) {
                         this.buttonLeft();
                     }
                 }, 
@@ -237,9 +239,9 @@ function MarioKart() {
 
                 distanceBottom: function() {
                     //365 é o tamanho na vertical
-                    let minDistance = 365 - oPlayer.y;
-                    let x = oPlayer.x;
-                    let y = oPlayer.y;
+                    let minDistance = 365 - this.y;
+                    let x = this.x;
+                    let y = this.y;
                     for (var i = 0; i < oMap.collision.length; i++) {
                         var oBox = oMap.collision[i];
                         //O jogador precisa estar abaixo ou acima da caixa para detectar as linha, isso evita detecções erradas
@@ -261,8 +263,8 @@ function MarioKart() {
                 },
 
                 distanceLeft: function() {
-                    let x = oPlayer.x;
-                    let y = oPlayer.y;
+                    let x = this.x;
+                    let y = this.y;
                     let minDistance = x;
                     for (var i = 0; i < oMap.collision.length; i++) {
                         var oBox = oMap.collision[i];
@@ -280,8 +282,8 @@ function MarioKart() {
                 },
 
                 distanceRight: function() {
-                    let x = oPlayer.x;
-                    let y = oPlayer.y;
+                    let x = this.x;
+                    let y = this.y;
                     let minDistance = 188 - x;
                     for (var i = 0; i < oMap.collision.length; i++) {
                         var oBox = oMap.collision[i];
@@ -298,9 +300,12 @@ function MarioKart() {
                     return minDistance;
                 },
 
-                hit: function() {
-                    let distance = 1;
-                    if (this.distanceUp() < distance || this.distanceBottom() < distance || this.distanceLeft() < distance || this.distanceRight() < distance) {
+                hit: function(number) {
+                    let distance = 2;
+                    if (this.distanceUp() < distance || this.distanceBottom() < distance || 
+                        this.distanceLeft() < distance || this.distanceRight() < distance ||
+                        this.x < 9 || this.x > imgWidth-distance || 
+                        this.y < 9 || this.y > imgHeight-distance) { 
                         return true;
                     } else {
                         return false;
@@ -314,17 +319,17 @@ function MarioKart() {
 
                 //Deceleration function
                 buttonDown :function() {
-                    oPlayer.speedinc -= 0.2;
+                    this.speedinc -= 0.2;
                 },
             
                 //Turn right
                 buttonRight :function() {
-                    oPlayer.rotincdir = -1;
+                    this.rotincdir = -1;
                 },
             
                 //Turn left
                 buttonLeft :function() {
-                    oPlayer.rotincdir = 1;
+                    this.rotincdir = 1;
                 }
                 
             };
@@ -557,16 +562,27 @@ function MarioKart() {
             // console.log('Bottom: ' + oPlayer.distanceBottom());
             // console.log('Left: ' + oPlayer.distanceLeft());
             // console.log('Right: ' + oPlayer.distanceRight());
-            if (oPlayer.hit()) {
+            // if (oPlayer.hit()) {
                 // oPlayer.think();
                 // console.log('HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIT!!!');
                 //Esse reset nao esta funcionando
                 // resetGame();
+            // }
+            for (let j=0; j<aKarts.length; j++) {
+                if (aKarts[j].hit(j)) {
+                    console.log('O j = ', j, ' hitou ein');
+                }
             }
-            //O jogador sempre acelera
-            // buttonUp();
 
+            //Debug
+            // cont++
+            // console.log(oPlayer.x, ' ', oPlayer.y);
+            // if (oPlayer.hit()) {
+            //     console.log('eu hitei ', cont);
+            //     console.log(oPlayer.distanceUp(), ' ', oPlayer.distanceRight(), ' ', oPlayer.distanceBottom(), ' ', oPlayer.distanceLeft());
+            // }
 
+            //=====================================
             var bDraw = true;
             if (iY > iHeight * iScreenScale || iY < 6 * iScreenScale) {
                 bDraw = false;
@@ -662,13 +678,21 @@ function MarioKart() {
         // (posx, posy) should be at (iViewCanvasWidth/2, iViewCanvasHeight - iViewYOffset) on view canvas
         oViewCanvas.width = oViewCanvas.width;
         
-        //Mas aqui passa as infinitas vezes, favor colocar  a função think aqui
         //Criar um for que passa por todas as posições do aKarts e faz o think em todos eles
         for (let i=0; i<aKarts.length-1; i++) {
-            console.log(aKarts[i].brain);
             aKarts[i].buttonUp();
-            aKarts[i].think();
+            aKarts[i].think(i);
+            if (aKarts[i].hit()) {
+                console.log('O i: ', i, 'hitou');
+                aKarts.splice(i, 1);
+            }
         }
+        // for (let i=0; i<aKarts.length; i++) {
+        //     if (aKarts[i].hit()) {
+        //         console.log('O i: ', i, 'hitou');
+        //         aKarts.splice(i, 1);
+        //     }
+        // }
 
 
         oViewCtx.fillStyle = "green";

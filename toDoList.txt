@@ -4,6 +4,7 @@ Ideias:
 3 - O mario morre quando ele bate
 4 - Colocar a foto do simoes no rosto do mario
 5 - Fazer um mapa com a rua mais larga
+6 - Essa ideia de aumentar os passos a cada geração (https://www.youtube.com/watch?v=Yo2SepcNyw4)
 
 Para fazer:
 - Pular a tela de seleção de personagem ou escolher so na primera vez X
@@ -14,6 +15,8 @@ Para fazer:
 - Ver como gerar varios personagens
 - Ver como guardar as informações dos marios no JSON X
 - Ver como matar os marios (split())
+
+mistakes arent necessari??? evil, they arent evil at all. they are just a inevitable consequence of doing something new
 
 
 Sprint 1 até (05/11):
@@ -29,13 +32,15 @@ Gabriel:
 
 Nicolau:
 ==============DOING========================
-!!!!!POR ALGUM MOTIVO ELES NAO ESTAO PENSANDO (THINKING), SO ACELERANDO, na vdd a função esta sendo chamada e as redes neurais estao diferentes, mas estao agindo iguais e nao estao virando, so acelerando
---> Ir na linha 666 e fazer um for colocando todos para pensar (think)
+- Fazer o calculateFitness
+- Quando eles morrem, a skin nao sai da tela, arrumar isso
 - Ver como fazer a roleta da sorte na mating pool
-- Ver como fazer o crossover da rede neural
+- Ver como fazer o crossover da rede neural (mexer nos pesos)
 - Ver como guardar as informações dos marios no JSON 
 - Ver se precisamos colocar mais detectores de distancia
 ======================DONE=================
+- Arrumar o this.hit() DONE
+--> Ir na linha 666 e fazer um for colocando todos para pensar (think) DONE
 --> Fazer as skins deles aparecerem no jogo DONE
 --> Colocar uma nn em cada um depois de colocar as skins DONE
 --> Colocar os buttons como metodos DONE
