@@ -561,11 +561,11 @@ function MarioKart() {
                 //Esse reset nao esta funcionando
                 // resetGame();
             // }
-            for (let j=0; j<aKarts.length; j++) {
-                if (aKarts[j].hit(j)) {
-                    console.log('O j = ', j, ' hitou ein');
-                }
-            }
+            // for (let j=0; j<aKarts.length; j++) {
+            //     if (aKarts[j].hit(j)) {
+            //         console.log('O j = ', j, ' hitou ein');
+            //     }
+            // }
 
             //Debug
             // cont++
@@ -676,7 +676,6 @@ function MarioKart() {
             aKarts[i].buttonUp();
             aKarts[i].think(i);
             if (aKarts[i].hit()) {
-                console.log('O i: ', i, 'hitou');
                 aKarts[i].freeze();
                 // aKarts.splice(i, 1);
             }
