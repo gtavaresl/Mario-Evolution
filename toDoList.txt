@@ -11,7 +11,7 @@ Para fazer:
 - Pular a tela de seleção de mapa ou escolher so na primera vez X
 - Ver se precisamos colocar mais detectores de distancia X
 - Fazer o outro mapa melhor se der tempo
-- Ver como fazer o crossover da rede neural X
+- Ver como fazer o crossover da rede neural X	
 - Ver como gerar varios personagens
 - Ver como guardar as informações dos marios no JSON X
 - Ver como matar os marios (split())
