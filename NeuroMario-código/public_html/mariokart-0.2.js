@@ -330,6 +330,10 @@ function MarioKart() {
                 //Turn left
                 buttonLeft :function() {
                     this.rotincdir = 1;
+                },
+
+                freeze: function() {
+                    this.speed = 0;
                 }
                 
             };
@@ -568,11 +572,11 @@ function MarioKart() {
                 //Esse reset nao esta funcionando
                 // resetGame();
             // }
-            for (let j=0; j<aKarts.length; j++) {
-                if (aKarts[j].hit(j)) {
-                    console.log('O j = ', j, ' hitou ein');
-                }
-            }
+            // for (let j=0; j<aKarts.length; j++) {
+            //     if (aKarts[j].hit(j)) {
+            //         console.log('O j = ', j, ' hitou ein');
+            //     }
+            // }
 
             //Debug
             // cont++
@@ -683,8 +687,8 @@ function MarioKart() {
             aKarts[i].buttonUp();
             aKarts[i].think(i);
             if (aKarts[i].hit()) {
-                console.log('O i: ', i, 'hitou');
-                aKarts.splice(i, 1);
+                aKarts[i].freeze();
+                // aKarts.splice(i, 1);
             }
         }
         // for (let i=0; i<aKarts.length; i++) {
