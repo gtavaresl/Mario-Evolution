@@ -4,6 +4,12 @@
 //Omap é o objeto que tem o mapa
 //oPlayer.rotation dá o angulo do jogador em graus. Acompanha o eixo y (para baixo), dai para baixo é 0 graus e depois segue o circulo trigonometrico
 //oBox é a caixa dos valores que o carrinho não pode ir, ele pega o vetor collision
+//
+//O oPlayer é o que vai ser printado na tela, então ele fica na ultima passagem
+const numberOfMarios = 5;
+const imgHeight = 374;
+const imgWidth = 198;
+var cont = 0;
 
 (function(exports) {
 
@@ -33,6 +39,8 @@ function MarioKart() {
                 x: 476,
                 y: 356 - 24
             }],
+            "sand":[
+            ],
             "startrotation": 180,
             "aipoints": [
                 [467, 273],
@@ -53,43 +61,30 @@ function MarioKart() {
         },
         "map2": {
             "texture": "media/map_2.png",
-            "width": 512,
-            "height": 512,
+            "width": 198,
+            "height": 374,
             "collision": [
-            	[72, 60, 59, 241]
+                [72, 60, 59, 241]
+            ],
+            "sand":[
+                [0, 0, 198, 10],
+                [0, 10, 14, 354],
+                [0, 364, 198, 10],
+                [189, 10, 9, 354],
+                [56, 51, 92, 272]
             ],
             "startpositions": [{
-                x: 40,
-                y: 322
+                x: 167,
+                y: 198
             }, {
-                x: 70 - 18,
-                y: 322 - 18
+                x: 167 - 18,
+                y: 196
             }, {
-                x: 70,
-                y: 322 - 24
+                x: 167,
+                y: 210
             }],
             "startrotation": 180,
-            "aipoints": [
-                [64, 253],
-                [55, 184],
-                [67, 132],
-                [141, 59],
-                [215, 51],
-                [317, 53],
-                [416, 51],
-                [462, 125],
-                [392, 191],
-                [399, 270],
-                [464, 353],
-                [431, 431],
-                [347, 373],
-                [303, 238],
-                [210, 191],
-                [187, 253],
-                [242, 378],
-                [188, 459],
-                [87, 420]
-            ]
+            "aipoints": [167,257]
         }
     }
     var aAvailableMaps = ["map1", "map2"];
@@ -165,57 +160,200 @@ function MarioKart() {
             // startMusic();
         }
 
-        //Um vetor vazio de karts
+        //Esse será o vetor que armzenará os players, no jogo original ficava com o usuario e as duas IA's
         aKarts = [];
         //Esse loop passa por todos os jogadores
-        for (var i = 0, l = aPlayers.length; i < l; ++i) {
+        // for (var i = 0, l = aPlayers.length; i < l; ++i) {
+        for (var i = 0; i < numberOfMarios; ++i) {
+            //O StartPos é declarado como -1 la em cima
             ++iStartPos;
+            //A cada passada do for nos colocamos o mairo para que todos os jogadores sejam colocados no jogo com a skin do mario
+            aPlayers[i] = 'mario';
 
-
-            //Esse é o jogador
-            //Declaração do objeto oPlayer
+            //Construtor do objeto oPlayer
             var p = {
                 player: aPlayers[i],
-                x: oMap.startpositions[iStartPos].x,
-                y: oMap.startpositions[iStartPos].y,
+                x: oMap.startpositions[0].x,
+                y: oMap.startpositions[0].y,
                 speed: 0,
                 speedinc: 0,
                 rotation: oMap.startrotation,
                 rotincdir: 0,
                 rotinc: 0,
                 sprite: new Sprite(aPlayers[i]),
-                cpu: false
+                cpu: false,
+                //Criação do cérebro do mario
+                brain: new NeuralNetwork(5, 100, 1),
+                //Métodos do objeto
+                think: function(number) {
+                    let inputs = [];
+                    inputs[0] = Math.pow(this.distanceUp(), 2);
+                    inputs[1] = Math.pow(this.distanceBottom(), 2);
+                    inputs[2] = Math.pow(this.distanceRight(), 2);
+                    inputs[3] = Math.pow(this.distanceLeft(), 2);
+                    inputs[4] = this.rotation;
+                    let output = this.brain.predict(inputs);
+                    if (output[0] > 0.5) {
+                        this.buttonRight();
+                    }
+                    if (output[0] < 0.5) {
+                        this.buttonLeft();
+                    }
+                }, 
+
+                distanceUp: function() {
+                    let x = this.x;
+                    let y = this.y;
+                    let minDistance = y;
+                    //Passa por todas as caixas contidas no vetor collision
+                    for (var i = 0; i < oMap.collision.length; i++) {
+                        var oBox = oMap.collision[i];
+                        //O jogador precisa estar abaixo ou acima da caixa para detectar as linha, isso evita detecções erradas
+                        if (x > oBox[0] && x < oBox[0] + oBox[2]){
+                            //As coordenadas y precisam ser menores que a atual do jogador, pois isso fara com que a linha esteja acima dele olhando no png do mapa
+                            if (oBox[1] < y) {
+                                minDistance = y - oBox[1];
+                            }
+                            //A outra linha da caixa
+                            if (oBox[1] + oBox[3] < y) {
+                                let distance = y - oBox[1] - oBox[3]; 
+                                if (distance < minDistance) {
+                                    minDistance = distance;
+                                }
+                            }
+                        }
+                        return minDistance;
+                    }
+                },
+
+                distanceBottom: function() {
+                    //365 é o tamanho na vertical
+                    let minDistance = 365 - this.y;
+                    let x = this.x;
+                    let y = this.y;
+                    for (var i = 0; i < oMap.collision.length; i++) {
+                        var oBox = oMap.collision[i];
+                        //O jogador precisa estar abaixo ou acima da caixa para detectar as linha, isso evita detecções erradas
+                        if (x > oBox[0] && x < oBox[0] + oBox[2]){
+                            //As coordenadas y da caixa precisam ser maiores que a atual do jogador, pois isso fara com que a linha esteja abaixo dele, olhando no png do mapa
+                            if (oBox[1] > y) {
+                                minDistance = oBox[1] - y;
+                            }
+                            //A outra linha da caixa
+                            if (oBox[1] + oBox[3] > y) {
+                                let distance = oBox[1] + oBox[3] - y;
+                                if (distance < minDistance) {
+                                    minDistance = distance; 
+                                }
+                            }
+                        }
+                    }
+                    return minDistance;
+                },
+
+                distanceLeft: function() {
+                    let x = this.x;
+                    let y = this.y;
+                    let minDistance = x;
+                    for (var i = 0; i < oMap.collision.length; i++) {
+                        var oBox = oMap.collision[i];
+                        //O jogador precisa estar à direita ou à esquerda da caixa para detectar as linhas, isso evita detecções erradas
+                        if (y > oBox[1] && y < oBox[1] + oBox[3]){
+                            //As coordenadas y da caixa precisam ser maiores que a atual do jogador, pois isso fara com que a linha esteja abaixo dele, olhando no png do mapa
+                            if (x > oBox[0] + oBox[2]) {
+                                minDistance = x - oBox[0] - oBox[2];
+                            }
+                            //A outra linha da caixa sempre estará mais longe, pois como nao ha coordenadas negativas o oBox[0]+oBox[2] sempre ira minimizar o minDistance
+                            //Entoncess não precisamos conferir
+                        }
+                    }
+                    return minDistance;
+                },
+
+                distanceRight: function() {
+                    let x = this.x;
+                    let y = this.y;
+                    let minDistance = 188 - x;
+                    for (var i = 0; i < oMap.collision.length; i++) {
+                        var oBox = oMap.collision[i];
+                        //O jogador precisa estar à direita ou à esquerda da caixa para detectar as linhas, isso evita detecções erradas
+                        if (y > oBox[1] && y < oBox[1] + oBox[3]){
+                            //As coordenadas y da caixa precisam ser maiores que a atual do jogador, pois isso fara com que a linha esteja abaixo dele, olhando no png do mapa
+                            if (x < oBox[0]) {
+                                minDistance = oBox[0] - x;
+                            }
+                            //A outra linha da caixa sempre estará mais longe, pois como nao ha coordenadas negativas o oBox[0]+oBox[2] sempre ira minimizar o minDistance
+                            //Entoncess não precisamos conferir
+                        }
+                    }
+                    return minDistance;
+                },
+
+                hit: function(number) {
+                    let distance = 2;
+                    if (this.distanceUp() < distance || this.distanceBottom() < distance || 
+                        this.distanceLeft() < distance || this.distanceRight() < distance ||
+                        this.x < 9 || this.x > imgWidth-distance || 
+                        this.y < 9 || this.y > imgHeight-distance) { 
+                        return true;
+                    } else {
+                        return false;
+                    }
+                },
+
+                // Acceleration function
+                buttonUp: function() {
+                    this.speedinc = 1;
+                },
+
+                //Deceleration function
+                buttonDown :function() {
+                    this.speedinc -= 0.2;
+                },
+            
+                //Turn right
+                buttonRight :function() {
+                    this.rotincdir = -1;
+                },
+            
+                //Turn left
+                buttonLeft :function() {
+                    this.rotincdir = 1;
+                }
+                
             };
-            if (aPlayers[i] == strPlayer)
-                //O jogador é o oPlayer, aqui que ocorrer essa passagem
+
+
+            // if (aPlayers[i] == strPlayer)
+                //O jogador é o oPlayer, aqui que ocorre essa passagem
                 oPlayer = p;
-                //Se adicionar mais vezes o jogador, ele fica mais rápido
+                //Adiciona o objeto que acabamos de criar no vetor de karts que vao para o jogo
                 aKarts.push(p);
         }
 
-        for (i = 0, l = aCharacters.length; i < l; ++i) {
-            //As IA's ficam com -1 no valor do vetor
-            if (aPlayers.indexOf(aCharacters[i]) === -1) {
-                ++iStartPos;
-                //Essas são as IA
-                var oEnemy = {
-                    player: aCharacters[i],
-                    x: oMap.startpositions[iStartPos].x,
-                    y: oMap.startpositions[iStartPos].y,
-                    speed: 0,
-                    speedinc: 0,
-                    rotation: oMap.startrotation,
-                    rotincdir: 0,
-                    rotinc: 0,
-                    sprite: new Sprite(aCharacters[i]),
-                    cpu: true,
-                    aipoint: 0
-                };
+        // for (i = 0, l = aCharacters.length; i < l; ++i) {
+        //     //As IA's ficam com -1 no valor do vetor
+        //     if (aPlayers.indexOf(aCharacters[i]) === -1) {
+        //         ++iStartPos;
+        //         //Essas são as IA
+        //         var oEnemy = {
+        //             player: aCharacters[i],
+        //             x: oMap.startpositions[iStartPos].x,
+        //             y: oMap.startpositions[iStartPos].y,
+        //             speed: 0,
+        //             speedinc: 0,
+        //             rotation: oMap.startrotation,
+        //             rotincdir: 0,
+        //             rotinc: 0,
+        //             sprite: new Sprite(aCharacters[i]),
+        //             cpu: true,
+        //             aipoint: 0
+        //         };
                 
-                //Isso adiciona as IA no jogo
-                // aKarts.push(oEnemy);
-            }
-        }
+        //         //Isso adiciona as IA no jogo
+        //         // aKarts.push(oEnemy);
+        //     }
+        // }
         render();
         bCounting = true;
         var oCount = document.createElement("div");
@@ -322,7 +460,6 @@ function MarioKart() {
 
     function resetScreen() {
         //Me parece que não passa aqui nenhuma vez
-        console.log('lalalalala');
         fSpriteScale = iScreenScale / 4;
         fLineScale = 1 / iScreenScale * iQuality;
         aStrips = [];
@@ -390,6 +527,7 @@ function MarioKart() {
     oViewCanvas.height = iViewCanvasHeight;
 
     function Sprite(strSprite) {
+        // buttonUp();
         var oImg = new Image();
         oImg.style.position = "absolute";
         oImg.style.left = "0px";
@@ -407,112 +545,33 @@ function MarioKart() {
 
         //FUNÇÃO DESENHAR
         this.draw = function(iX, iY, fScale) {
-            //Minhas funções
-            function distanceUp() {
-                let x = oPlayer.x;
-                let y = oPlayer.y;
-                let minDistance = y;
-                //Passa por todas as caixas contidas no vetor collision
-                for (var i = 0; i < oMap.collision.length; i++) {
-                    var oBox = oMap.collision[i];
-                    //O jogador precisa estar abaixo ou acima da caixa para detectar as linha, isso evita detecções erradas
-                    if (x > oBox[0] && x < oBox[0] + oBox[2]){
-                        //As coordenadas y precisam ser menores que a atual do jogador, pois isso fara com que a linha esteja acima dele olhando no png do mapa
-                        if (oBox[1] < y) {
-                            minDistance = y - oBox[1];
-                        }
-                        //A outra linha da caixa
-                        if (oBox[1] + oBox[3] < y) {
-                            let distance = y - oBox[1] - oBox[3]; 
-                            if (distance < minDistance) {
-                                minDistance = distance;
-                            }
-                        }
-                    }
-                    return minDistance;
-                }
-            }    
 
-            function distanceBottom() {
-                //365 é o tamanho na vertical
-                let minDistance = 365 - oPlayer.y;
-                let x = oPlayer.x;
-                let y = oPlayer.y;
-                for (var i = 0; i < oMap.collision.length; i++) {
-                    var oBox = oMap.collision[i];
-                    //O jogador precisa estar abaixo ou acima da caixa para detectar as linha, isso evita detecções erradas
-                    if (x > oBox[0] && x < oBox[0] + oBox[2]){
-                        //As coordenadas y da caixa precisam ser maiores que a atual do jogador, pois isso fara com que a linha esteja abaixo dele, olhando no png do mapa
-                        if (oBox[1] > y) {
-                            minDistance = oBox[1] - y;
-                        }
-                        //A outra linha da caixa
-                        if (oBox[1] + oBox[3] > y) {
-                            let distance = oBox[1] + oBox[3] - y;
-                            if (distance < minDistance) {
-                                minDistance = distance; 
-                            }
-                        }
-                    }
-                }
-                return minDistance;
-            }
-
-            function distanceLeft() {
-                let x = oPlayer.x;
-                let y = oPlayer.y;
-                let minDistance = x;
-                for (var i = 0; i < oMap.collision.length; i++) {
-                    var oBox = oMap.collision[i];
-                    //O jogador precisa estar à direita ou à esquerda da caixa para detectar as linhas, isso evita detecções erradas
-                    if (y > oBox[1] && y < oBox[1] + oBox[3]){
-                        //As coordenadas y da caixa precisam ser maiores que a atual do jogador, pois isso fara com que a linha esteja abaixo dele, olhando no png do mapa
-                        if (x > oBox[0] + oBox[2]) {
-                            minDistance = x - oBox[0] - oBox[2];
-                        }
-                        //A outra linha da caixa sempre estará mais longe, pois como nao ha coordenadas negativas o oBox[0]+oBox[2] sempre ira minimizar o minDistance
-                        //Entoncess não precisamos conferir
-                    }
-                }
-                return minDistance;
-            }
-        
-            function distanceRight() {
-                let x = oPlayer.x;
-                let y = oPlayer.y;
-                let minDistance = 188 - x;
-                for (var i = 0; i < oMap.collision.length; i++) {
-                    var oBox = oMap.collision[i];
-                    //O jogador precisa estar à direita ou à esquerda da caixa para detectar as linhas, isso evita detecções erradas
-                    if (y > oBox[1] && y < oBox[1] + oBox[3]){
-                        //As coordenadas y da caixa precisam ser maiores que a atual do jogador, pois isso fara com que a linha esteja abaixo dele, olhando no png do mapa
-                        if (x < oBox[0]) {
-                            minDistance = oBox[0] - x;
-                        }
-                        //A outra linha da caixa sempre estará mais longe, pois como nao ha coordenadas negativas o oBox[0]+oBox[2] sempre ira minimizar o minDistance
-                        //Entoncess não precisamos conferir
-                    }
-                }
-                return minDistance;
-            }
-        
-
-
-            
             //Aqui passa várias vezes
-            console.log('Up: ' + distanceUp());
-            console.log('Bottom: ' + distanceBottom());
-            console.log('Left: ' + distanceLeft());
-            console.log('Right: ' + distanceRight());
-            if (distanceRight() < 2) {
-                console.log('paraaa');
+            // console.log('Up: ' + oPlayer.distanceUp());
+            // console.log('Bottom: ' + oPlayer.distanceBottom());
+            // console.log('Left: ' + oPlayer.distanceLeft());
+            // console.log('Right: ' + oPlayer.distanceRight());
+            // if (oPlayer.hit()) {
+                // oPlayer.think();
+                // console.log('HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIT!!!');
                 //Esse reset nao esta funcionando
                 // resetGame();
+            // }
+            for (let j=0; j<aKarts.length; j++) {
+                if (aKarts[j].hit(j)) {
+                    console.log('O j = ', j, ' hitou ein');
+                }
             }
-            //O jogador sempre acelera
-            // buttonUP();
 
+            //Debug
+            // cont++
+            // console.log(oPlayer.x, ' ', oPlayer.y);
+            // if (oPlayer.hit()) {
+            //     console.log('eu hitei ', cont);
+            //     console.log(oPlayer.distanceUp(), ' ', oPlayer.distanceRight(), ' ', oPlayer.distanceBottom(), ' ', oPlayer.distanceLeft());
+            // }
 
+            //=====================================
             var bDraw = true;
             if (iY > iHeight * iScreenScale || iY < 6 * iScreenScale) {
                 bDraw = false;
@@ -608,8 +667,21 @@ function MarioKart() {
         // (posx, posy) should be at (iViewCanvasWidth/2, iViewCanvasHeight - iViewYOffset) on view canvas
         oViewCanvas.width = oViewCanvas.width;
         
-        //Mas aqui passa as infinitas vezes, favor colocar  a função think aqui
-        // oPlayer.think();
+        //Criar um for que passa por todas as posições do aKarts e faz o think em todos eles
+        for (let i=0; i<aKarts.length-1; i++) {
+            aKarts[i].buttonUp();
+            aKarts[i].think(i);
+            if (aKarts[i].hit()) {
+                console.log('O i: ', i, 'hitou');
+                aKarts.splice(i, 1);
+            }
+        }
+        // for (let i=0; i<aKarts.length; i++) {
+        //     if (aKarts[i].hit()) {
+        //         console.log('O i: ', i, 'hitou');
+        //         aKarts.splice(i, 1);
+        //     }
+        // }
 
 
         oViewCtx.fillStyle = "green";
@@ -691,21 +763,28 @@ function MarioKart() {
         oHills.draw(oPlayer.rotation);
         oTrees.draw(oPlayer.rotation);
     }
+    
+    function wall(iX, iY) {
+        for (var i = 0; i < oMap.collision.length; i++) {
+            var oBox = oMap.collision[i];
+            if ((iX > oBox[0] && iX < oBox[0] + oBox[2])&&(iY > oBox[1] && iY < oBox[1] + oBox[3])) return true;
+        }
+        return false;
+    }
 
     function canMoveTo(iX, iY) {
         if (iX > iMapWidth - 5 || iY > iMapHeight - 5) return false;
         if (iX < 4 || iY < 4) return false;
-        for (var i = 0; i < oMap.collision.length; i++) {
-            var oBox = oMap.collision[i];
-                 //se x está para dentro da caixa (x maior que a linha da esquerda e x menor que a linha da direita)
-            if (iX > oBox[0] && iX < oBox[0] + oBox[2]) {
-                //se y esta dentro da caixa, mesma logica de cima
-                if (iY > oBox[1] && iY < oBox[1] + oBox[3]) {
-                    return false;
-                }
-            }
-        }
+        if(wall(iX, iY) == true) return false;
         return true;
+    }
+
+    function areia(iX, iY) {
+        for(var i=0; i < oMap.sand.length; i++) {
+            var oBox = oMap.sand[i];
+            if ((iX > oBox[0] && iX < oBox[0] + oBox[2])&&(iY > oBox[1] && iY < oBox[1] + oBox[3]))  return true;
+        }
+        return false;
     }
 
     function move(oKart) {
@@ -767,6 +846,7 @@ function MarioKart() {
         }
         // decrease speed
         oKart.speed *= 0.9;
+        if(areia( oKart.x, oKart.y) == true) oKart.speed *= 0.5;
     }
 
     function ai(oKart) {
@@ -823,24 +903,24 @@ function MarioKart() {
     //Decidi mudar o nome para distanceUp()
 
     //Acceleration function
-    function buttonUP() {
-        oPlayer.speedinc = 1;
-    }
+    // function buttonUp() {
+    //     oPlayer.speedinc = 1;
+    // }
 
     //Deceleration function
-    function buttonDown() {
-        oPlayer.speedinc -= 0.2;
-    }
+    // function buttonDown() {
+    //     oPlayer.speedinc -= 0.2;
+    // }
 
-    //Turn right
-    function buttonRight() {
-        oPlayer.rotincdir = -1;
-    }
+    // //Turn right
+    // function buttonRight() {
+    //     oPlayer.rotincdir = -1;
+    // }
 
-    //Turn left
-    function buttonLeft() {
-        oPlayer.rotincdir = 1;
-    }
+    // //Turn left
+    // function buttonLeft() {
+    //     oPlayer.rotincdir = 1;
+    // }
 
 
 
@@ -849,23 +929,19 @@ function MarioKart() {
         switch (e.keyCode) {
             case 38:
                 // up
-                // oPlayer.speedinc = 1;
-                buttonUP();
+                oPlayer.buttonUp();
                 break;
             case 37:
                 // left
-                // oPlayer.rotincdir = 1;
-                buttonLeft();
+                oPlayer.buttonLeft();
                 break;
             case 39:
                 // right
-                // oPlayer.rotincdir = -1;
-                buttonRight();
+                oPlayer.buttonRight();
                 break;
             case 40:
                 // down
-                // oPlayer.speedinc -= 0.2;
-                buttonDown();
+                oPlayer.buttonDown();
                 break;
         }
         _self.emit("playerMove", oPlayer);
