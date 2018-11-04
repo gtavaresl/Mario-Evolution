@@ -319,6 +319,10 @@ function MarioKart() {
                 //Turn left
                 buttonLeft :function() {
                     this.rotincdir = 1;
+                },
+
+                freeze: function() {
+                    this.speed = 0;
                 }
                 
             };
@@ -673,7 +677,8 @@ function MarioKart() {
             aKarts[i].think(i);
             if (aKarts[i].hit()) {
                 console.log('O i: ', i, 'hitou');
-                aKarts.splice(i, 1);
+                aKarts[i].freeze();
+                // aKarts.splice(i, 1);
             }
         }
         // for (let i=0; i<aKarts.length; i++) {
