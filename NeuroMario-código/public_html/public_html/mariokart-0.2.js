@@ -319,10 +319,6 @@ function MarioKart() {
                 //Turn left
                 buttonLeft :function() {
                     this.rotincdir = 1;
-                },
-
-                freeze: function() {
-                    this.speed = 0;
                 }
                 
             };
@@ -561,11 +557,11 @@ function MarioKart() {
                 //Esse reset nao esta funcionando
                 // resetGame();
             // }
-            // for (let j=0; j<aKarts.length; j++) {
-            //     if (aKarts[j].hit(j)) {
-            //         console.log('O j = ', j, ' hitou ein');
-            //     }
-            // }
+            for (let j=0; j<aKarts.length; j++) {
+                if (aKarts[j].hit(j)) {
+                    console.log('O j = ', j, ' hitou ein');
+                }
+            }
 
             //Debug
             // cont++
@@ -676,8 +672,8 @@ function MarioKart() {
             aKarts[i].buttonUp();
             aKarts[i].think(i);
             if (aKarts[i].hit()) {
-                aKarts[i].freeze();
-                // aKarts.splice(i, 1);
+                console.log('O i: ', i, 'hitou');
+                aKarts.splice(i, 1);
             }
         }
         // for (let i=0; i<aKarts.length; i++) {
@@ -994,30 +990,20 @@ function MarioKart() {
         oCtrStyle.width = (iWidth * iScreenScale) + "px";
         oCtrStyle.height = (iHeight * iScreenScale) + "px";
         oContainer.appendChild(oScr);
-        for (var i = 0; i < aCharacters.length; i++) {
-            var oPImg = document.createElement("img");
-            oPImg.src = "media/select_" + aCharacters[i] + ".png";
-            oPImg.style.width = (12 * iScreenScale) + "px";
-            oPImg.style.height = (12 * iScreenScale) + "px";
-            oPImg.style.position = "absolute"
-            oPImg.style.left = (((iWidth - 12 * aCharacters.length) / 2 + i * 12) * iScreenScale) + "px";
-            oPImg.style.top = (18 * iScreenScale) + "px";
-            oPImg.player = aCharacters[i];
-            
-            //Vamos pular o click do usuario e setar o mario mesmo
-            // strPlayer = "mario";
-            // _self.addPlayer(strPlayer);
-            // _self.emit("playerSelect", strPlayer);
-
-            //ONCLICK!!!
-            oPImg.onclick = function() {
+        var oPImg = document.createElement("img");
+        oPImg.src = "media/startbutton.png";
+        oPImg.style.width = (12 * iScreenScale) + "px";
+        oPImg.style.height = (12 * iScreenScale) + "px";
+        oPImg.style.position = "absolute"
+        oPImg.style.left = (((iWidth - 84) / 2 + i * 12) * iScreenScale) + "px";
+        oPImg.style.top = (18 * iScreenScale) + "px";
+        oPImg.player = aCharacters[0];
+        oPImg.onclick = function() {
                 strPlayer = this.player;
                 _self.addPlayer(strPlayer);
                 _self.emit("playerSelect", strPlayer);
-            }
-            oScr.appendChild(oPImg);
         }
-        
+        oScr.appendChild(oPImg);
         oStatus = document.createElement("blink");
         oStatus.style.position = "absolute";
         oStatus.style.width = (45 * iScreenScale) + "px";
@@ -1028,7 +1014,7 @@ function MarioKart() {
         oStatus.style.fontStyle = "bold";
         oStatus.style.fontFamily = "monospaced";
         oStatus.style.fontSize = "22px";
-        oStatus.appendChild(document.createTextNode("Select a character!"));
+        oStatus.appendChild(document.createTextNode(">>UM TEXTO AQUI!<<"));
         
         oScr.appendChild(oStatus);
     }
