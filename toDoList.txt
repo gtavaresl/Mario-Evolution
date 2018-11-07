@@ -19,26 +19,24 @@ Para fazer:
 mistakes arent necessari??? evil, they arent evil at all. they are just a inevitable consequence of doing something new
 
 
-Sprint 1 até (05/11):
+Sprint 2 até (07/11):
 Edson:
-- Entender POO
-- Ver a playlist do flappybird
-- Entender o codigo do jogo (Entender o vetor collision) e fazer outro mapa (quadrado)
-- Criar um github e passar pro Nicolau
+- Entender o codigo
+- Tentar tirar as telas de escolha
+- 
  
 Gabriel:
-- Corrigir e fazer funcionar o código q já tava feito
 - Pular as telas
 
 Nicolau:
 ==============DOING========================
 - Fazer o calculateFitness
-- Quando eles morrem, a skin nao sai da tela, arrumar isso
 - Ver como fazer a roleta da sorte na mating pool
 - Ver como fazer o crossover da rede neural (mexer nos pesos)
 - Ver como guardar as informações dos marios no JSON 
 - Ver se precisamos colocar mais detectores de distancia
 ======================DONE=================
+- Quando eles morrem, a skin nao sai da tela, arrumar isso
 - Arrumar o this.hit() DONE
 --> Ir na linha 666 e fazer um for colocando todos para pensar (think) DONE
 --> Fazer as skins deles aparecerem no jogo DONE
