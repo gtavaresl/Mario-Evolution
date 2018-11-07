@@ -1,4 +1,4 @@
-const numberOfMarios = 5;
+const numberOfMarios = 500;
 
 var i;
 var elJugador = [];
@@ -11,11 +11,11 @@ for(i=0; i<numberOfMarios; i++) {
         //Métodos do objeto
         think: function(oMap) {
             let inputs = [];
-            inputs[0] = Math.pow(this.distanceUp(oMap), 2);
-            inputs[1] = Math.pow(this.distanceBottom(oMap), 2);
-            inputs[2] = Math.pow(this.distanceRight(oMap), 2);
-            inputs[3] = Math.pow(this.distanceLeft(oMap), 2);
-            inputs[4] = this.rotation;
+            inputs[0] = this.distanceUp(oMap);
+            inputs[1] = this.distanceBottom(oMap);
+            inputs[2] = this.distanceRight(oMap);
+            inputs[3] = this.distanceLeft(oMap);
+            inputs[4] = this.rotation/360;
             let output = this.brain.predict(inputs);
             if (output[0] > 0.5) {
                 this.buttonRight();

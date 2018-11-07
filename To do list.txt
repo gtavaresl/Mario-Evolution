@@ -26,13 +26,13 @@ Gabriel:
 
 Nicolau:
 ==============DOING========================
-- Fazer o calculateFitness
 - Ver como fazer a roleta da sorte na mating pool
 - Matar os marios que caem na areia ou deixa-los vivos???
 - Ver como fazer o crossover da rede neural (mexer nos pesos)
 - Ver como guardar as informações dos marios no JSON 
 - Ver se precisamos colocar mais detectores de distancia
 ======================DONE=================
+- Fazer o calculateFitness
 - Quando eles morrem, a skin nao sai da tela, arrumar isso
 - Arrumar o this.hit() DONE
 --> Ir na linha 666 e fazer um for colocando todos para pensar (think) DONE
