@@ -1,6 +1,4 @@
 # Genetic Algorithms in Mario Kart
 
-A project for university
+Let's build an AI to play Mario Kart!!
 
-[x] teste\n
-[] testes2
