@@ -182,8 +182,10 @@ function MarioKart() {
                 rotinc: 0,
                 sprite: new Sprite(aPlayers[i]),
                 cpu: false,
+                isFreezed :0,
                 //Criação do cérebro do mario
                 brain: new NeuralNetwork(5, 100, 1),
+
                 //Métodos do objeto
                 think: function(number) {
                     let inputs = [];
@@ -290,7 +292,7 @@ function MarioKart() {
                 },
 
                 hit: function(number) {
-                    let distance = 2;
+                    let distance = 3;
                     if (this.distanceUp() < distance || this.distanceBottom() < distance || 
                         this.distanceLeft() < distance || this.distanceRight() < distance ||
                         this.x < 9 || this.x > imgWidth-distance || 
@@ -676,10 +678,16 @@ function MarioKart() {
             aKarts[i].buttonUp();
             aKarts[i].think(i);
             if (aKarts[i].hit()) {
-                aKarts[i].freeze();
+                aKarts[i].isFreezed = 1;
                 // aKarts.splice(i, 1);
             }
+            if(aKarts[i].isFreezed){
+                aKarts[i].freeze();
+            }
+            
         }
+    
+        
         // for (let i=0; i<aKarts.length; i++) {
         //     if (aKarts[i].hit()) {
         //         console.log('O i: ', i, 'hitou');
