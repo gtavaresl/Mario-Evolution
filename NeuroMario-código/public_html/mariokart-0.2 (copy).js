@@ -186,9 +186,7 @@ function MarioKart() {
             p.isFreezed = 0;
             //Criação do cérebro do mario
             p.brain = new NeuralNetwork(5, 100, 1);
-            //Fim do construtor
 
-            ///////////////////
             oPlayer = p;
             //Adiciona o objeto que acabamos de criar no vetor de karts que vao para o jogo
             aKarts.push(p);
@@ -547,11 +545,6 @@ function MarioKart() {
             if(aKarts[i].isFreezed){
                 aKarts[i].freeze();
             }
-
-            if(isEverybodyDead(aKarts)){
-                console.log('Morreu geral');
-                aKarts = newGeneration(aKarts);
-            } 
         }
     
 //=====================================================================================

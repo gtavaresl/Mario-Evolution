@@ -1,7 +1,67 @@
-const numberOfMarios = 500;
+const numberOfMarios = 5;
+const mutationRate = 0.1;
 
 var i;
 var elJugador = [];
+
+function isEverybodyDead(aKarts) {
+    for(var i=0; i<aKarts.length-1; i++) {
+        if(!aKarts[i].isFreezed) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function newGeneration(aKarts) {
+    console.log('Generating new population');
+    var newPopulation = [];
+
+    for(var i=0; i<aKarts.length; i++){
+        var newMario = acceptReject(aKarts);
+        
+        //Remember me
+        console.log('bora mutar');
+        newMario.brain.mutate(mutationRate);
+        console.log('mutou');
+
+        newPopulation[i] = newMario;
+    }
+
+    return newGeneration;
+}
+
+function maxFitness(aKarts) {
+    var maxFit = -1;
+    for (var i=0; i<aKarts.length; i++){
+        if(aKarts[i].fitness > maxFit){
+            maxFit = aKarts[i].fitness;
+        }
+    }
+    return maxFit;
+}
+
+function acceptReject(aKarts) {
+    var sayNoToInfinityLoop = 0;
+    while(true && sayNoToInfinityLoop < 10000){    
+        sayNoToInfinityLoop++;
+        //Pick a random mario from the array
+        var index = Math.floor(Math.random(0, aKarts.length));
+        var partner = aKarts[index];
+
+        //Pick a random number between 0 and the maximum fitness
+        //The probability to pick this nummber is the same that the probability to pick
+        //a number less than the fitness of this mario
+        var r = Math.floor(Math.random(maxFitness(aKarts)));
+        if(r < partner.fitness) {
+            console.log('eu fui aceito!!');
+            return partner;
+        }
+        console.log('vai de novo');
+    }
+    console.log('passou de 10000 e sai do loop');
+    return null;
+}
 
 //Construtor
 //Cria os vários objetos declarando os métodos
@@ -148,6 +208,6 @@ for(i=0; i<numberOfMarios; i++) {
         freeze: function() {
             this.speed = 0;
         }
-        
+
     };
 }
