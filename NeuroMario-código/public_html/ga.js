@@ -1,11 +1,11 @@
-const numberOfMarios = 5;
-const mutationRate = 0.1;
+const numberOfMarios = 500;
+const mutationRate = 0.3;
 
 var i;
 var elJugador = [];
 
 function isEverybodyDead(aKarts) {
-    for(var i=0; i<aKarts.length-1; i++) {
+    for(var i=1; i<aKarts.length; i++) {
         if(!aKarts[i].isFreezed) {
             return false;
         }
@@ -13,27 +13,73 @@ function isEverybodyDead(aKarts) {
     return true;
 }
 
-function newGeneration(aKarts) {
-    console.log('Generating new population');
-    var newPopulation = [];
-
-    for(var i=0; i<aKarts.length; i++){
-        var newMario = acceptReject(aKarts);
-        
-        //Remember me
-        console.log('bora mutar');
-        newMario.brain.mutate(mutationRate);
-        console.log('mutou');
-
-        newPopulation[i] = newMario;
+function normalizeFitness(aKarts) {
+    //Fazer os pontos serem exponencialmente melhores
+    for(let i=1; i<aKarts.length; i++){
+        aKarts[i].fitness = Math.pow(aKarts[i].fitness, 2);
     }
 
-    return newGeneration;
+    //Achando o soma total
+    var sum = 0;
+    for (let i=1; i<aKarts.length; i++){
+        sum += aKarts[i].fitness;
+    }
+    console.log('so pra testar: sum - aKarts[2],fit, aKarts[30].fit');
+    console.log(sum, aKarts[2].fitness, aKarts[30].fitness);
+    // console.log(sum);
+
+    //Dividir todo mundo pela soma
+    for (let i=1; i<aKarts.length; i++){
+        aKarts[i].fitness = aKarts[i].fitness / sum;
+    }
+    // console.log('olha so');
+    // console.log(aKarts);
+    return aKarts;
+}
+
+function newGeneration(aKarts, oMap) {
+    console.log('Gerando nova populacao');
+    var newPopulation = [];
+    //Normalizando o fitness 
+    aKarts = normalizeFitness(aKarts);
+    console.log('pos');
+    console.log(aKarts);
+
+    for(var i=1; i<aKarts.length; i++){
+        //Pega um objeto baseado no fitness dele, quanto maior o fitness, mair provavel
+        var newMario = acceptReject(aKarts);
+        
+        // console.log('bora mutar esse mario aqui');
+        // console.log(newMario);
+        newMario.brain.mutate(mutationRate);
+        // console.log('mutou');
+
+        //Resetar as informações (Novo construtor do objeto)
+        newMario.speed = 0;
+        newMario.speedinc = 0;
+        newMario.rotincdir = 0;
+        newMario.rotinc = 0;
+        newMario.fitness = 0;
+        newMario.x = 167;
+        newMario.y = 198;
+        newMario.rotation = oMap.startrotation;
+        newMario.isFreezed = 0; //The new Mario is not freezed anymore
+        
+        //Adicionar o novo mario no vetor da nova população
+        newPopulation[i] = newMario;
+    }
+    //O kart que eu controlo fica em 0, basta passar essa posicao para o novo vetor
+    newPopulation[0] = aKarts[0];
+    // console.log('nova rapeize: ');
+    // console.log(newPopulation);
+
+
+    return newPopulation;
 }
 
 function maxFitness(aKarts) {
     var maxFit = -1;
-    for (var i=0; i<aKarts.length; i++){
+    for (var i=1; i<aKarts.length; i++){
         if(aKarts[i].fitness > maxFit){
             maxFit = aKarts[i].fitness;
         }
@@ -41,25 +87,27 @@ function maxFitness(aKarts) {
     return maxFit;
 }
 
+function randomBetween(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+//Based on fitness, we'll choose a mario to survive
 function acceptReject(aKarts) {
     var sayNoToInfinityLoop = 0;
     while(true && sayNoToInfinityLoop < 10000){    
         sayNoToInfinityLoop++;
         //Pick a random mario from the array
-        var index = Math.floor(Math.random(0, aKarts.length));
+        var index = Math.floor(randomBetween(0, aKarts.length));
         var partner = aKarts[index];
 
         //Pick a random number between 0 and the maximum fitness
-        //The probability to pick this nummber is the same that the probability to pick
+        //The probability to pick this number is the same that the probability to pick
         //a number less than the fitness of this mario
-        var r = Math.floor(Math.random(maxFitness(aKarts)));
+        var r = Math.floor(randomBetween(0, maxFitness(aKarts)));
         if(r < partner.fitness) {
-            console.log('eu fui aceito!!');
             return partner;
         }
-        console.log('vai de novo');
     }
-    console.log('passou de 10000 e sai do loop');
     return null;
 }
 
