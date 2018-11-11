@@ -1,4 +1,4 @@
-const numberOfMarios = 500;
+const numberOfMarios = 10;
 const mutationRate = 0.3;
 
 var i;
@@ -24,16 +24,11 @@ function normalizeFitness(aKarts) {
     for (let i=1; i<aKarts.length; i++){
         sum += aKarts[i].fitness;
     }
-    console.log('so pra testar: sum - aKarts[2],fit, aKarts[30].fit');
-    console.log(sum, aKarts[2].fitness, aKarts[30].fitness);
-    // console.log(sum);
 
     //Dividir todo mundo pela soma
     for (let i=1; i<aKarts.length; i++){
-        aKarts[i].fitness = aKarts[i].fitness / sum;
+        aKarts[i].fitness = ((aKarts[i].fitness)*1.0)/sum;
     }
-    // console.log('olha so');
-    // console.log(aKarts);
     return aKarts;
 }
 
@@ -42,17 +37,14 @@ function newGeneration(aKarts, oMap) {
     var newPopulation = [];
     //Normalizando o fitness 
     aKarts = normalizeFitness(aKarts);
-    console.log('pos');
-    console.log(aKarts);
+    
+    // aKarts[2].brain.weights_ih.print();
 
     for(var i=1; i<aKarts.length; i++){
         //Pega um objeto baseado no fitness dele, quanto maior o fitness, mair provavel
         var newMario = acceptReject(aKarts);
         
-        // console.log('bora mutar esse mario aqui');
-        // console.log(newMario);
         newMario.brain.mutate(mutationRate);
-        // console.log('mutou');
 
         //Resetar as informações (Novo construtor do objeto)
         newMario.speed = 0;
@@ -70,10 +62,7 @@ function newGeneration(aKarts, oMap) {
     }
     //O kart que eu controlo fica em 0, basta passar essa posicao para o novo vetor
     newPopulation[0] = aKarts[0];
-    // console.log('nova rapeize: ');
-    // console.log(newPopulation);
-
-
+    
     return newPopulation;
 }
 
@@ -109,6 +98,28 @@ function acceptReject(aKarts) {
         }
     }
     return null;
+}
+
+//If is partnerA, cut from the first column, if is not partner A, begin cutting in column cutPoint+1
+function identityMatrix(isParterA, cutPoint) {
+    
+}
+
+function crossOver(partnerA, partnerB) {
+    //Chose a point to make crossover
+    var cutPoint = randomBetween(1, partnerA.cols-1);
+    var identityForA = identityMatrix(true, cutPoint);
+    var identityForB = identityMatrix(false, cutPoint);
+
+    //Cuts the matrix
+    partnerA = multiply(partnerA, identityForA);
+    partnerB = multiply(partnerB, identityForB);
+
+    //Now we have half matrix, we just need to add
+    partnerA = addMatrix(partnerA, partnerB);
+
+    //Return the child
+    return partnerA;
 }
 
 //Construtor

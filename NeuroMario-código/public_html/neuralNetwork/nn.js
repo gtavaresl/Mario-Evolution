@@ -17,10 +17,10 @@ let tanh = new ActivationFunction(
   y => 1 - (y * y)
 );
 
+
+//Variables for randomGaussian2
 var previous = false;
 var y2 = 0;
-
-
 randomGaussian2 = function(mean, sd) {
   var y1, x1, x2, w;
   if (previous) {
