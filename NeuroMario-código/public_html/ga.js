@@ -1,4 +1,4 @@
-const numberOfMarios = 10;
+const numberOfMarios = 500;
 const mutationRate = 0.3;
 
 var i;
@@ -14,7 +14,7 @@ function isEverybodyDead(aKarts) {
 }
 
 function normalizeFitness(aKarts) {
-    //Fazer os pontos serem exponencialmente melhores
+    //Fazer os pontos serem exponencialmente melhores elevando ao quadrado
     for(let i=1; i<aKarts.length; i++){
         aKarts[i].fitness = Math.pow(aKarts[i].fitness, 2);
     }
@@ -25,15 +25,20 @@ function normalizeFitness(aKarts) {
         sum += aKarts[i].fitness;
     }
 
-    //Dividir todo mundo pela soma
+    //Dividir todo mundo pela soma total
     for (let i=1; i<aKarts.length; i++){
         aKarts[i].fitness = ((aKarts[i].fitness)*1.0)/sum;
     }
     return aKarts;
 }
 
+var kk=0;
 function newGeneration(aKarts, oMap) {
     console.log('Gerando nova populacao');
+    if (kk===0){
+        crossOver(aKarts[1], aKarts[3]);
+        kk++;
+    }
     var newPopulation = [];
     //Normalizando o fitness 
     aKarts = normalizeFitness(aKarts);
@@ -100,26 +105,85 @@ function acceptReject(aKarts) {
     return null;
 }
 
-//If is partnerA, cut from the first column, if is not partner A, begin cutting in column cutPoint+1
-function identityMatrix(isParterA, cutPoint) {
-    
+//If is partnerA, cut from the first column till the cut point, if is not partner A, begin cutting in column cutPoint+1 till "in the end it doesn't even matter. I tried so hard....."
+function identityMatrix(isParterA, cutPoint, numCols) {
+    var identityMatrix = new Matrix(numCols, numCols);
+    //Put 0 in every position
+    identityMatrix.data = Array(identityMatrix.rows).fill().map(() => Array(identityMatrix.cols).fill(0));
+    if(isParterA){
+        for(let i=0; i<=cutPoint; i++){
+            //Put 1 in the diagonal until the cutPoint
+            identityMatrix.data[i][i] = 1;
+        }
+    } else {
+        for (let i=cutPoint+1; i<numCols; i++){
+            //Put 1 in the diagonal until from cutPoint until the end
+            identityMatrix.data[i][i] = 1;
+        }
+    }
+    // identityMatrix.print();
+    return identityMatrix;
 }
 
 function crossOver(partnerA, partnerB) {
+    var copyPartnerA = partnerA;
+    partnerA.brain.weights_ih.print();
+    var copyPartnerB = partnerB;
+    partnerB.brain.weights_ih.print();
+    var child = aKarts;
+
+    for (var i=0; i<partnerA.brain.weights_ih.cols; i++){
+        for (var j=0; j<partnerA.brain.weights_ih.rows; j++){
+            child.brain.weights_ih.data[j][i] = 0;
+        }
+    }    
+    child.brain.weights_ih.print();
+
+    // var rows = partnerA.brain.weights_ih.rows;
+    // var cols = partnerA.brain.weights_ih.cols
+    // child.brain.weights_ih = new Matrix(rows, cols);
+
     //Chose a point to make crossover
-    var cutPoint = randomBetween(1, partnerA.cols-1);
-    var identityForA = identityMatrix(true, cutPoint);
-    var identityForB = identityMatrix(false, cutPoint);
+    // var cutPoint = Math.floor(randomBetween(1, partnerA.brain.weights_ih.cols-1));
+    var cutPoint = 1;
+    console.log('cut point: ', cutPoint);
+    //First part
+    for (var i=0; i<=cutPoint; i++){
+        for (var j=0; j<partnerA.brain.weights_ih.rows; j++){
+            child.brain.weights_ih.data[j][i] = partnerA.brain.weights_ih.data[j][i];
+        }
+    }    
 
-    //Cuts the matrix
-    partnerA = multiply(partnerA, identityForA);
-    partnerB = multiply(partnerB, identityForB);
+    // Second part
+    for (var i=cutPoint+1; i<partnerB.brain.weights_ih.cols; i++){
+        for (var j=0; j<partnerB.brain.weights_ih.rows; j++){
+            console.log('');
+            child.brain.weights_ih.data[j][i] = partnerB.brain.weights_ih.data[j][i];
+        }
+    }    
+    // partnerA.brain.weights_ih.print();
+    // partnerB.brain.weights_ih.print();
+    child.brain.weights_ih.print();
 
-    //Now we have half matrix, we just need to add
-    partnerA = addMatrix(partnerA, partnerB);
+    // var identityForA = identityMatrix(true, cutPoint, copyPartnerA.brain.weights_ih.cols);
+    // var identityForB = identityMatrix(false, cutPoint, copyPartnerB.brain.weights_ih.cols);
+    
+    // //Cuts the matrix
+    // copyPartnerA.brain.weights_ih = Matrix.multiply(copyPartnerA.brain.weights_ih, identityForA);
+    // copyPartnerB.brain.weights_ih.print();
+    // copyPartnerB.brain.weights_ih = Matrix.multiply(copyPartnerB.brain.weights_ih, identityForB);
 
-    //Return the child
-    return partnerA;
+    // //Now we have half matrix, we just need to add them
+    // copyPartnerA.brain.weights_ih = Matrix.addMatrix(copyPartnerA.brain.weights_ih, copyPartnerB.brain.weights_ih);
+
+    // //Return the child
+    // console.log('partnerA');
+    // // partnerA.brain.weights_ih.print();
+    // // console.log('partnerB');
+    // // partnerB.brain.weights_ih.print();
+    // console.log('child');
+    // // copyPartnerA.brain.weights_ih.print();
+    return child;
 }
 
 //Construtor

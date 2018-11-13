@@ -39,7 +39,7 @@ class Matrix {
       return;
     }
 
-    // Return a new Matrix a-b
+    // Return a new Matrix a+b
     return new Matrix(a.rows, a.cols)
       .map((_, i, j) => a.data[i][j] + b.data[i][j]);
   }
@@ -127,7 +127,7 @@ class Matrix {
 
   print() {
     console.table(this.data);
-    return this;
+    // return this;
   }
 
   serialize() {
