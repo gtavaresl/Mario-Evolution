@@ -32,24 +32,43 @@ function normalizeFitness(aKarts) {
     return aKarts;
 }
 
-var kk=0;
-function newGeneration(aKarts, oMap) {
-    console.log('Gerando nova populacao');
-    if (kk===0){
-        crossOver(aKarts[1], aKarts[3]);
-        kk++;
+function crossOver(partnerA, partnerB) {
+	var child = partnerA;
+	//Chose a point to make crossover
+    var cutPoint = Math.floor(randomBetween(1, partnerA.brain.weights_ih.rows-1));
+    for (var i=cutPoint+1; i<partnerB.brain.weights_ih.rows; i++){
+            child.brain.weights_ih.data[i] = partnerB.brain.weights_ih.data[i];
     }
+    return child;
+}
+
+var cont = 1;
+function newGeneration(aKarts, oMap) {
+    console.log('Generation: ', cont);
+    cont++;
     var newPopulation = [];
     //Normalizando o fitness 
     aKarts = normalizeFitness(aKarts);
-    
-    // aKarts[2].brain.weights_ih.print();
-
-    for(var i=1; i<aKarts.length; i++){
+    var Best = bestFitness(aKarts);
+    console.log('Best Fitness: ', Best.fitness);
+    Best.speed = 0;
+    Best.speedinc = 0;
+    Best.rotincdir = 0;
+    Best.rotinc = 0;
+    Best.fitness = 0;
+    Best.x = 167;
+    Best.y = 198;
+    Best.rotation = oMap.startrotation;
+    Best.isFreezed = 0;
+    for(var i=2; i<aKarts.length; i++){
         //Pega um objeto baseado no fitness dele, quanto maior o fitness, mair provavel
-        var newMario = acceptReject(aKarts);
-        
-        newMario.brain.mutate(mutationRate);
+        var partnerA = acceptReject(aKarts);
+        var partnerB = acceptReject(aKarts);
+        var newMario = crossOver(partnerA,partnerB);
+        /*if(aKarts[i] != Best) newMario = crossOver(Best,aKarts[i]);
+        else newMario = Best;*/
+
+        //newMario.brain.mutate(mutationRate);
 
         //Resetar as informações (Novo construtor do objeto)
         newMario.speed = 0;
@@ -67,6 +86,7 @@ function newGeneration(aKarts, oMap) {
     }
     //O kart que eu controlo fica em 0, basta passar essa posicao para o novo vetor
     newPopulation[0] = aKarts[0];
+    newPopulation[1] = Best;
     
     return newPopulation;
 }
@@ -83,7 +103,17 @@ function maxFitness(aKarts) {
 
 function randomBetween(min, max) {
     return Math.random() * (max - min) + min;
-  }
+ }
+
+ function bestFitness(aKarts) {
+    var bestKart = aKarts[1];
+    for (let i=1; i<aKarts.length; i++) {
+        if(aKarts[i].fitness > bestKart.fitness) {
+            bestKart = aKarts[i];
+        }
+    }
+    return bestKart;
+}
 
 //Based on fitness, we'll choose a mario to survive
 function acceptReject(aKarts) {
@@ -125,67 +155,6 @@ function identityMatrix(isParterA, cutPoint, numCols) {
     return identityMatrix;
 }
 
-function crossOver(partnerA, partnerB) {
-    var copyPartnerA = partnerA;
-    partnerA.brain.weights_ih.print();
-    var copyPartnerB = partnerB;
-    partnerB.brain.weights_ih.print();
-    var child = aKarts;
-
-    for (var i=0; i<partnerA.brain.weights_ih.cols; i++){
-        for (var j=0; j<partnerA.brain.weights_ih.rows; j++){
-            child.brain.weights_ih.data[j][i] = 0;
-        }
-    }    
-    child.brain.weights_ih.print();
-
-    // var rows = partnerA.brain.weights_ih.rows;
-    // var cols = partnerA.brain.weights_ih.cols
-    // child.brain.weights_ih = new Matrix(rows, cols);
-
-    //Chose a point to make crossover
-    // var cutPoint = Math.floor(randomBetween(1, partnerA.brain.weights_ih.cols-1));
-    var cutPoint = 1;
-    console.log('cut point: ', cutPoint);
-    //First part
-    for (var i=0; i<=cutPoint; i++){
-        for (var j=0; j<partnerA.brain.weights_ih.rows; j++){
-            child.brain.weights_ih.data[j][i] = partnerA.brain.weights_ih.data[j][i];
-        }
-    }    
-
-    // Second part
-    for (var i=cutPoint+1; i<partnerB.brain.weights_ih.cols; i++){
-        for (var j=0; j<partnerB.brain.weights_ih.rows; j++){
-            console.log('');
-            child.brain.weights_ih.data[j][i] = partnerB.brain.weights_ih.data[j][i];
-        }
-    }    
-    // partnerA.brain.weights_ih.print();
-    // partnerB.brain.weights_ih.print();
-    child.brain.weights_ih.print();
-
-    // var identityForA = identityMatrix(true, cutPoint, copyPartnerA.brain.weights_ih.cols);
-    // var identityForB = identityMatrix(false, cutPoint, copyPartnerB.brain.weights_ih.cols);
-    
-    // //Cuts the matrix
-    // copyPartnerA.brain.weights_ih = Matrix.multiply(copyPartnerA.brain.weights_ih, identityForA);
-    // copyPartnerB.brain.weights_ih.print();
-    // copyPartnerB.brain.weights_ih = Matrix.multiply(copyPartnerB.brain.weights_ih, identityForB);
-
-    // //Now we have half matrix, we just need to add them
-    // copyPartnerA.brain.weights_ih = Matrix.addMatrix(copyPartnerA.brain.weights_ih, copyPartnerB.brain.weights_ih);
-
-    // //Return the child
-    // console.log('partnerA');
-    // // partnerA.brain.weights_ih.print();
-    // // console.log('partnerB');
-    // // partnerB.brain.weights_ih.print();
-    // console.log('child');
-    // // copyPartnerA.brain.weights_ih.print();
-    return child;
-}
-
 //Construtor
 //Cria os vários objetos declarando os métodos
 //As instâncias serão setadas no outro arquivo a partir da linha 176
@@ -199,6 +168,7 @@ for(i=0; i<numberOfMarios; i++) {
             inputs[2] = this.distanceRight(oMap);
             inputs[3] = this.distanceLeft(oMap);
             inputs[4] = this.rotation/360;
+            inputs[5] = this.speed;
             let output = this.brain.predict(inputs);
             if (output[0] > 0.5) {
                 this.buttonRight();

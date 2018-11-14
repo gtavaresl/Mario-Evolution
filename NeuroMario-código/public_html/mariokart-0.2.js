@@ -187,7 +187,7 @@ function MarioKart() {
             p.fitness = 0;
             p.isFreezed = 0;
             //Criação do cérebro do mario
-            p.brain = new NeuralNetwork(5, 100, 1);
+            p.brain = new NeuralNetwork(6, 100, 1);
             //Fim do construtor
 
             firstTime++;
