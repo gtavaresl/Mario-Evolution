@@ -51,9 +51,9 @@ function newGeneration(aKarts, oMap) {
     // savedBirds.sort(function(a, b){return b.score-a.score});
     sortedArray.sort(function(a, b){return b.fitness-a.fitness});
     //Normalizando o fitness 
-    console.log('so pra ver: ', (sortedArray.length)*0.2);
+    console.log('Best fitness: ', sortedArray[0].fitness);
     for(let i=1; i<(sortedArray.length)*0.2; i++){
-        newPopulation[i] = sortedArray[i];
+        newPopulation[i] = sortedArray[i-1];
         newPopulation[i].speed = 0;
         newPopulation[i].speedinc = 0;
         newPopulation[i].rotincdir = 0;
