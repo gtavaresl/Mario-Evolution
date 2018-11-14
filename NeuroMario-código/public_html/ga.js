@@ -47,28 +47,43 @@ function newGeneration(aKarts, oMap) {
     console.log('Generation: ', cont);
     cont++;
     var newPopulation = [];
+    var sortedArray = aKarts;
+    // savedBirds.sort(function(a, b){return b.score-a.score});
+    sortedArray.sort(function(a, b){return b.fitness-a.fitness});
     //Normalizando o fitness 
+    console.log('so pra ver: ', (sortedArray.length)*0.2);
+    for(let i=1; i<(sortedArray.length)*0.2; i++){
+        newPopulation[i] = sortedArray[i];
+        newPopulation[i].speed = 0;
+        newPopulation[i].speedinc = 0;
+        newPopulation[i].rotincdir = 0;
+        newPopulation[i].rotinc = 0;
+        newPopulation[i].fitness = 0;
+        newPopulation[i].x = 167;
+        newPopulation[i].y = 198;
+        newPopulation[i].rotation = oMap.startrotation;
+        newPopulation[i].isFreezed = 0;
+    }
     aKarts = normalizeFitness(aKarts);
-    var Best = bestFitness(aKarts);
-    console.log('Best Fitness: ', Best.fitness);
-    Best.speed = 0;
-    Best.speedinc = 0;
-    Best.rotincdir = 0;
-    Best.rotinc = 0;
-    Best.fitness = 0;
-    Best.x = 167;
-    Best.y = 198;
-    Best.rotation = oMap.startrotation;
-    Best.isFreezed = 0;
-    for(var i=2; i<aKarts.length; i++){
+    // var Best = bestFitness(aKarts);
+    // console.log('Best Fitness: ', Best.fitness);
+    // Best.speed = 0;
+    // Best.speedinc = 0;
+    // Best.rotincdir = 0;
+    // Best.rotinc = 0;
+    // Best.fitness = 0;
+    // Best.x = 167;
+    // Best.y = 198;
+    // Best.rotation = oMap.startrotation;
+    // Best.isFreezed = 0;
+
+    for(var i=(sortedArray.length)*0.2; i<aKarts.length; i++){
         //Pega um objeto baseado no fitness dele, quanto maior o fitness, mair provavel
         var partnerA = acceptReject(aKarts);
         var partnerB = acceptReject(aKarts);
         var newMario = crossOver(partnerA,partnerB);
-        /*if(aKarts[i] != Best) newMario = crossOver(Best,aKarts[i]);
-        else newMario = Best;*/
-
-        //newMario.brain.mutate(mutationRate);
+        
+        newMario.brain.mutate(mutationRate);
 
         //Resetar as informações (Novo construtor do objeto)
         newMario.speed = 0;
@@ -86,7 +101,11 @@ function newGeneration(aKarts, oMap) {
     }
     //O kart que eu controlo fica em 0, basta passar essa posicao para o novo vetor
     newPopulation[0] = aKarts[0];
-    newPopulation[1] = Best;
+    // for(let i=0; i<aKarts.length; i++){
+        // console.log(i);
+        // console.log(newPopulation[i]);
+    // }
+    // newPopulation[1] = Best;
     
     return newPopulation;
 }
