@@ -18,6 +18,32 @@ let tanh = new ActivationFunction(
 );
 
 
+//Variables for randomGaussian2
+var previous = false;
+var y2 = 0;
+randomGaussian2 = function(mean, sd) {
+  var y1, x1, x2, w;
+  if (previous) {
+    y1 = y2;
+    previous = false;
+  } else {
+    do {
+      x1 = Math.random(2) - 1;
+      x2 = Math.random(2) - 1;
+      w = x1 * x1 + x2 * x2;
+    } while (w >= 1);
+    w = Math.sqrt(-2 * Math.log(w) / w);
+    y1 = x1 * w;
+    y2 = x2 * w;
+    previous = true;
+  }
+
+  var m = mean || 0;
+  var s = sd || 1;
+  return y1 * s + m;
+};
+
+
 class NeuralNetwork {
   /*
   * if first argument is a NeuralNetwork the constructor clones it
@@ -178,7 +204,7 @@ class NeuralNetwork {
     function mutate(val){
       if(Math.random() < rate) {
         // return 2*Math.random() -1;
-        return val + randomGaussian(0, 0.1);
+        return val + randomGaussian2(0, 0.1);
       } else {
         return val;
       }
