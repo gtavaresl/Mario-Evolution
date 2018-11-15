@@ -144,10 +144,30 @@ for(i=0; i<numberOfMarios; i++) {
         //Métodos do objeto
         think: function(oMap) {
             let inputs = [];
-            inputs[0] = this.distanceUp(oMap);
-            inputs[1] = this.distanceBottom(oMap);
-            inputs[2] = this.distanceRight(oMap);
-            inputs[3] = this.distanceLeft(oMap);
+            if(this.rotation > 135 && this.rotation <= 225 ){
+            	inputs[0] = this.distanceUp(oMap);
+            	inputs[1] = this.distanceBottom(oMap);
+            	inputs[2] = this.distanceRight(oMap);
+            	inputs[3] = this.distanceLeft(oMap);
+            }
+            else if(this.rotation > 45 && this.rotation <= 135 ){
+            	inputs[0] = this.distanceRight(oMap);
+            	inputs[1] = this.distanceLeft(oMap);
+            	inputs[2] = this.distanceBottom(oMap);
+            	inputs[3] = this.distanceUp(oMap);
+            }
+            else if(this.rotation > 225 && this.rotation <= 315 ){
+            	inputs[0] = this.distanceLeft(oMap);
+            	inputs[1] = this.distanceRight(oMap);
+            	inputs[2] = this.distanceUp(oMap);
+            	inputs[3] = this.distanceBottom(oMap);
+            }
+            else if(this.rotation > 315 || this.rotation <= 45 ){
+            	inputs[0] = this.distanceBottom(oMap);
+            	inputs[1] = this.distanceUp(oMap);
+            	inputs[2] = this.distanceLeft(oMap);
+            	inputs[3] = this.distanceRight(oMap);
+            }
             inputs[4] = this.rotation/360;
             inputs[5] = this.speed;
             let output = this.brain.predict(inputs);
@@ -186,7 +206,7 @@ for(i=0; i<numberOfMarios; i++) {
 
         distanceBottom: function(oMap) {
             //365 é o tamanho na vertical
-            let minDistance = 365 - this.y;
+            let minDistance = oMap.height - 9 - this.y;
             let x = this.x;
             let y = this.y;
             for (var i = 0; i < oMap.collision.length; i++) {
@@ -231,7 +251,7 @@ for(i=0; i<numberOfMarios; i++) {
         distanceRight: function(oMap) {
             let x = this.x;
             let y = this.y;
-            let minDistance = 188 - x;
+            let minDistance = oMap.width - 10 - x;
             for (var i = 0; i < oMap.collision.length; i++) {
                 var oBox = oMap.collision[i];
                 //O jogador precisa estar à direita ou à esquerda da caixa para detectar as linhas, isso evita detecções erradas
