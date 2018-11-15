@@ -875,15 +875,15 @@ function MarioKart() {
         oContainer.appendChild(oScr);
 
         //Loop roda qtd de vezes de jogadores
-        for (var i = 0; i < aCharacters.length; i++) {
+        //for (var i = 0; i < aCharacters.length; i++) {
             var oPImg = document.createElement("img");
-            oPImg.src = "media/select_" + aCharacters[i] + ".png";
+            oPImg.src = "media/start_button.png";
             oPImg.style.width = (12 * iScreenScale) + "px";
             oPImg.style.height = (12 * iScreenScale) + "px";
             oPImg.style.position = "absolute"
-            oPImg.style.left = (((iWidth - 12 * aCharacters.length) / 2 + i * 12) * iScreenScale) + "px";
+            oPImg.style.left = (((iWidth - 12 * aCharacters.length) / 2 + 12) * iScreenScale) + "px";
             oPImg.style.top = (18 * iScreenScale) + "px";
-            oPImg.player = aCharacters[i];
+            oPImg.player = aCharacters[0];
             
             // 
             //ONCLICK!!!
@@ -893,7 +893,7 @@ function MarioKart() {
                 _self.emit("playerSelect", strPlayer);
             }
             oScr.appendChild(oPImg);
-        }
+        //}
         
         oStatus = document.createElement("blink");
         oStatus.style.position = "absolute";
@@ -905,7 +905,7 @@ function MarioKart() {
         oStatus.style.fontStyle = "bold";
         oStatus.style.fontFamily = "monospaced";
         oStatus.style.fontSize = "22px";
-        oStatus.appendChild(document.createTextNode("Select a character!"));
+        oStatus.appendChild(document.createTextNode("Start Evolution!"));
         
         oScr.appendChild(oStatus);
     }
