@@ -560,8 +560,13 @@ function MarioKart() {
             if(isEverybodyDead(aKarts)){
                 // firstTimeDead++;
                 // console.log('Morreu geral');
-                aKarts = newGeneration(aKarts, oMap); //This new array is not freezed anymore
-                // console.log(aKarts);
+                // var aKartsCopy = [];
+                // var theMario = aKarts[0];
+                // for (let i=1; i<aKarts.length; i++){
+                    // aKartsCopy[i] = clone(aKarts[i], oMap);
+                // }
+                aKarts = newGeneration(aKarts, oMap, clone); //This new array is not freezed anymore
+                // aKarts[0] = theMario;
             } 
             //reset game
             //start again
@@ -1086,6 +1091,169 @@ function MarioKart() {
         }
         return this;
     };
+
+    //===========================================CLONE============================================
+    function clone (obj) {
+        var newCopy = {
+            //Métodos do objeto
+            think: function(oMap) {
+                let inputs = [];
+                inputs[0] = this.distanceUp(oMap);
+                inputs[1] = this.distanceBottom(oMap);
+                inputs[2] = this.distanceRight(oMap);
+                inputs[3] = this.distanceLeft(oMap);
+                inputs[4] = this.rotation/360;
+                inputs[5] = this.speed;
+                let output = this.brain.predict(inputs);
+                if (output[0] > 0.55) {
+                    this.buttonRight();
+                }
+                if (output[0] < 0.45) {
+                    this.buttonLeft();
+                }
+            }, 
+
+            distanceUp: function(oMap) {
+                let x = this.x;
+                let y = this.y;
+                let minDistance = y;
+                //Passa por todas as caixas contidas no vetor collision
+                for (var i = 0; i < oMap.collision.length; i++) {
+                    var oBox = oMap.collision[i];
+                    //O jogador precisa estar abaixo ou acima da caixa para detectar as linha, isso evita detecções erradas
+                    if (x > oBox[0] && x < oBox[0] + oBox[2]){
+                        //As coordenadas y precisam ser menores que a atual do jogador, pois isso fara com que a linha esteja acima dele olhando no png do mapa
+                        if (oBox[1] < y) {
+                            minDistance = y - oBox[1];
+                        }
+                        //A outra linha da caixa
+                        if (oBox[1] + oBox[3] < y) {
+                            let distance = y - oBox[1] - oBox[3]; 
+                            if (distance < minDistance) {
+                                minDistance = distance;
+                            }
+                        }
+                    }
+                    return minDistance;
+                }
+            },
+
+            distanceBottom: function(oMap) {
+                //365 é o tamanho na vertical
+                let minDistance = 365 - this.y;
+                let x = this.x;
+                let y = this.y;
+                for (var i = 0; i < oMap.collision.length; i++) {
+                    var oBox = oMap.collision[i];
+                    //O jogador precisa estar abaixo ou acima da caixa para detectar as linha, isso evita detecções erradas
+                    if (x > oBox[0] && x < oBox[0] + oBox[2]){
+                        //As coordenadas y da caixa precisam ser maiores que a atual do jogador, pois isso fara com que a linha esteja abaixo dele, olhando no png do mapa
+                        if (oBox[1] > y) {
+                            minDistance = oBox[1] - y;
+                        }
+                        //A outra linha da caixa
+                        if (oBox[1] + oBox[3] > y) {
+                            let distance = oBox[1] + oBox[3] - y;
+                            if (distance < minDistance) {
+                                minDistance = distance; 
+                            }
+                        }
+                    }
+                }
+                return minDistance;
+            },
+
+            distanceLeft: function(oMap) {
+                let x = this.x;
+                let y = this.y;
+                let minDistance = x;
+                for (var i = 0; i < oMap.collision.length; i++) {
+                    var oBox = oMap.collision[i];
+                    //O jogador precisa estar à direita ou à esquerda da caixa para detectar as linhas, isso evita detecções erradas
+                    if (y > oBox[1] && y < oBox[1] + oBox[3]){
+                        //As coordenadas y da caixa precisam ser maiores que a atual do jogador, pois isso fara com que a linha esteja abaixo dele, olhando no png do mapa
+                        if (x > oBox[0] + oBox[2]) {
+                            minDistance = x - oBox[0] - oBox[2];
+                        }
+                        //A outra linha da caixa sempre estará mais longe, pois como nao ha coordenadas negativas o oBox[0]+oBox[2] sempre ira minimizar o minDistance
+                        //Entoncess não precisamos conferir
+                    }
+                }
+                return minDistance;
+            },
+
+            distanceRight: function(oMap) {
+                let x = this.x;
+                let y = this.y;
+                let minDistance = 188 - x;
+                for (var i = 0; i < oMap.collision.length; i++) {
+                    var oBox = oMap.collision[i];
+                    //O jogador precisa estar à direita ou à esquerda da caixa para detectar as linhas, isso evita detecções erradas
+                    if (y > oBox[1] && y < oBox[1] + oBox[3]){
+                        //As coordenadas y da caixa precisam ser maiores que a atual do jogador, pois isso fara com que a linha esteja abaixo dele, olhando no png do mapa
+                        if (x < oBox[0]) {
+                            minDistance = oBox[0] - x;
+                        }
+                        //A outra linha da caixa sempre estará mais longe, pois como nao ha coordenadas negativas o oBox[0]+oBox[2] sempre ira minimizar o minDistance
+                        //Entoncess não precisamos conferir
+                    }
+                }
+                return minDistance;
+            },
+
+            hit: function(oMap) {
+                let distance = 3;
+                if (this.distanceUp(oMap) < distance || this.distanceBottom(oMap) < distance || 
+                    this.distanceLeft(oMap) < distance || this.distanceRight(oMap) < distance ||
+                    this.x < 9 || this.x > imgWidth-distance || 
+                    this.y < 9 || this.y > imgHeight-distance) { 
+                    return true;
+                } else {
+                    return false;
+                }
+            },
+
+            // Acceleration function
+            buttonUp: function() {
+                this.speedinc = 1;
+            },
+
+            //Deceleration function
+            buttonDown :function() {
+                this.speedinc -= 0.2;
+            },
+
+            //Turn right
+            buttonRight :function() {
+                this.rotincdir = -1;
+            },
+
+            //Turn left
+            buttonLeft :function() {
+                this.rotincdir = 1;
+            },
+
+            freeze: function() {
+                this.speed = 0;
+            }
+
+        };
+        newCopy.player = obj.player;
+        newCopy.sprite = obj.sprite;
+        newCopy.cpu = obj.cpu;
+        newCopy.speed = obj.speed;
+        newCopy.speedinc = obj.speedinc;
+        newCopy.rotincdir = obj.rotincdir;
+        newCopy.rotinc = obj.rotinc;
+        newCopy.fitness = obj.fitness;
+        newCopy.x = obj.x;
+        newCopy.y = obj.y;
+        newCopy.rotation = obj.rotation;
+        newCopy.isFreezed = obj.isFreezed;
+        newCopy.brain = obj.brain.copy();
+        return newCopy;
+    }
+    //Fim da função clone
 }
 
 var isArray = Array.isArray || function(arr) {
@@ -1227,4 +1395,4 @@ onDomReady(function() {
     exports.MarioKart = new MarioKart();
 });
 
-})(self);
+})(self); 

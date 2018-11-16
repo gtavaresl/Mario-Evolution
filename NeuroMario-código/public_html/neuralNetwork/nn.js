@@ -200,11 +200,16 @@ class NeuralNetwork {
   //   this.bias_o.map(func);
   // }
 
-  mutate(rate){
+  mutate(rate, mutation){
     function mutate(val){
-      if(Math.random() < rate) {
+      var value = Math.random();
+      if(value < rate) {
         // return 2*Math.random() -1;
-        return val + randomGaussian2(0, 0.1);
+        if (value < (rate*1.0)/2) {
+          return val + randomGaussian2(0, mutation);
+        } else {
+          return val - randomGaussian2(0, mutation);
+        }
       } else {
         return val;
       }
