@@ -2,6 +2,8 @@ const numberOfMarios = 500;
 const mutationRate = 0.3;
 const mutation = 0.2;
 
+
+var contadorPodeGerar = 0;
 var i;
 var elJugador = [];
 
@@ -38,25 +40,25 @@ function crossOver(partnerA, partnerB, cloneFunction) {
 	var child = cloneFunction(partnerA);
 	//Chose a point to make crossover
     var cutPoint = Math.floor(randomBetween(1, partnerA.brain.weights_ih.rows-1));
-    for (var i=cutPoint+1; i<partnerB.brain.weights_ih.rows; i++){
+    for (var i=cutPoint+1; i < partnerB.brain.weights_ih.rows; i++){
             child.brain.weights_ih.data[i] = partnerB.brain.weights_ih.data[i];
     }
     return child;
 }
 
 var cont = 1;
-function newGeneration(aKarts, oMap,cloneFunction) {
+function newGeneration(aKarts, oMap,cloneFunction, Sprite) {
     console.log('Generation: ', cont);
     cont++;
     var newPopulation = [];
     //Normalizando o fitness 
     aKarts = normalizeFitness(aKarts);
-    var Best = bestFitness(aKarts);
-    console.log('Best Fitness: ', Best.fitness);
+    var best = bestFitness(aKarts);
+    console.log('Best Fitness: ', best.fitness);
     for(var i=1; i<aKarts.length; i++){
         //Pega um objeto baseado no fitness dele, quanto maior o fitness, mais provavel
-        var newMario = cloneFunction(Best);
-        newMario.brain.mutate(mutationRate, mutation);
+        var newMario = crossOver(best, aKarts[i],cloneFunction);
+        if(aKarts[i] != best) newMario.brain.mutate(mutationRate, mutation);
         newMario.speed = 0;
         newMario.speedinc = 0;
         newMario.x = oMap.startpositions[0].x;

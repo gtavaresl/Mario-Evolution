@@ -567,10 +567,12 @@ function MarioKart() {
             }
 
             if(isEverybodyDead(aKarts)){
-                // firstTimeDead++;
-                // console.log('Morreu geral');
-                aKarts = newGeneration(aKarts, oMap, cloneFunction); //This new array is not freezed anymore
-                // console.log(aKarts);
+            	if(contadorPodeGerar > numberOfMarios){
+            		aKarts = newGeneration(aKarts, oMap, cloneFunction, Sprite); //This new array is not freezed anymore
+            		contadorPodeGerar = 0;
+            	}else{
+            		contadorPodeGerar++;
+            	}
             } 
             //reset game
             //start again
@@ -750,7 +752,7 @@ function MarioKart() {
         oKart.speed *= 0.9;
         if(areia( oKart.x, oKart.y) == true){
         	oKart.speed *= 0.6;
-    		oKart.fitness--;
+    		oKart.fitness-=2;
     	}
     	oKart.fitness*=(1+0.1*check(oKart.x, oKart.y));
     }
@@ -916,8 +918,13 @@ function MarioKart() {
                 this.rotincdir = 1;
             },
 
-            freeze: function() {
+            freeze: function(oMap) {
                 this.speed = 0;
+                this.x = oMap.startpositions[0].x;
+            	this.y = oMap.startpositions[0].y;
+            	this.rotation = oMap.startrotation;
+            	this.rotincdir = 0;
+            	this.rotinc = 0;
             }
 
         };
