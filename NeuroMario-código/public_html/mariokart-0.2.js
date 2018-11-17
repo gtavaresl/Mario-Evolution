@@ -1238,8 +1238,8 @@ function MarioKart() {
             }
 
         };
-        newCopy.player = obj.player;
-        newCopy.sprite = obj.sprite;
+        newCopy.player = 'mario';
+        newCopy.sprite = new Sprite('mario');
         newCopy.cpu = obj.cpu;
         newCopy.speed = obj.speed;
         newCopy.speedinc = obj.speedinc;
