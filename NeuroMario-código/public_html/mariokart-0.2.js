@@ -557,16 +557,21 @@ function MarioKart() {
                 aKarts[i].freeze();
             }
 
-            if(isEverybodyDead(aKarts)){
-                // firstTimeDead++;
-                // console.log('Morreu geral');
-                // var aKartsCopy = [];
-                // var theMario = aKarts[0];
-                // for (let i=1; i<aKarts.length; i++){
-                    // aKartsCopy[i] = clone(aKarts[i], oMap);
-                // }
-                aKarts = newGeneration(aKarts, oMap, clone); //This new array is not freezed anymore
-                // aKarts[0] = theMario;
+            if(isEverybodyDead(aKarts)) {
+                if (contadorPodeGerar > numberOfMarios) {
+                    podeGerar = true;
+                }
+                // console.log('podeGerar: ', podeGerar);
+                // console.log('contadorPodeGerar: ', contadorPodeGerar);
+                if (podeGerar) {
+                    aKarts = newGeneration(aKarts, oMap, clone); //This new array is not freezed anymore
+                    // oKart = aKarts[0];
+                    podeGerar = false;
+                    contadorPodeGerar = 0;
+                } else {
+                    contadorPodeGerar++;
+                }
+                
             } 
             //reset game
             //start again
@@ -1240,6 +1245,7 @@ function MarioKart() {
         };
         newCopy.player = 'mario';
         newCopy.sprite = new Sprite('mario');
+        // newCopy.sprite = obj.sprite;
         newCopy.cpu = obj.cpu;
         newCopy.speed = obj.speed;
         newCopy.speedinc = obj.speedinc;

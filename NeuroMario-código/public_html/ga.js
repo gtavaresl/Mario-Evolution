@@ -1,6 +1,8 @@
 const numberOfMarios = 500;
-const mutationRate = 0.1;
-const mutation = 0.2;
+const mutationRate = 0.3;
+const mutation = 0.3;
+var podeGerar = false;
+var contadorPodeGerar = 0;
 
 var i;
 var elJugador = [];
@@ -50,11 +52,7 @@ function newGeneration(aKarts, oMap, cloneFunction) {
     console.log('Generation: ', cont);
     cont++;
     var newPopulation = [];
-    
-    // var sortedArray = aKarts;
-    // sortedArray.sort(function(a, b){return b.fitness-a.fitness});
-
-    
+        
     aKarts = normalizeFitness(aKarts);
     //Aqui fazemos a copia de todos os karts para um novo vetor, assim não iremos mexer no original
     var aKartsCopy = [];
@@ -64,30 +62,7 @@ function newGeneration(aKarts, oMap, cloneFunction) {
     
     aKartsCopy.sort(function(a, b){return b.fitness-a.fitness});
 
-    // var theTwo = bestFitness(aKartsCopy);
-    // var Best = sortedArray[0];
     console.log('Best Fitness: ', aKartsCopy[0].fitness, ' qtd ', aKartsCopy.length);
-    //Resetar as infos
-    // theTwo.A.speed = 0;
-    // theTwo.A.speedinc = 0;
-    // theTwo.A.rotincdir = 0;
-    // theTwo.A.rotinc = 0;
-    // theTwo.A.fitness = 0;
-    // theTwo.A.x = 167;
-    // theTwo.A.y = 198;
-    // theTwo.A.rotation = oMap.startrotation;
-    // theTwo.A.isFreezed = 0;
-    // //Idem
-    // theTwo.B.speed = 0;
-    // theTwo.B.speedinc = 0;
-    // theTwo.B.rotincdir = 0;
-    // theTwo.B.rotinc = 0;
-    // theTwo.B.fitness = 0;
-    // theTwo.B.x = 167;
-    // theTwo.B.y = 198;
-    // theTwo.B.rotation = oMap.startrotation;
-    // theTwo.B.isFreezed = 0;
-
 
     for(var i=3; i<aKarts.length; i++){
         //Pega um objeto baseado no fitness dele, quanto maior o fitness, mair provavel
@@ -116,21 +91,10 @@ function newGeneration(aKarts, oMap, cloneFunction) {
     }
     //O kart que eu controlo fica em 0, basta passar essa posicao para o novo vetor
     newPopulation[0] = aKarts[0];
-    newPopulation[1] = aKarts[1];
-    newPopulation[2] = aKarts[2];
-
-    // newPopulation[1] = theTwo.A;
-    // newPopulation[2] = theTwo.B;
-    // for(let i=0; i<aKarts.length; i++){
-    //     console.log(i);
-    //     console.log(newPopulation[i]);
-    // }
-    // newPopulation[1] = Best;
-    if (newPopulation[2] === newPopulation[2])
-        console.log('igual');
-    else 
-        console.log('diferente');
-
+    newPopulation[1] = aKartsCopy[1];
+    newPopulation[2] = aKartsCopy[2];
+    
+    aKarts.splice(0, numberOfMarios);
 
     return newPopulation;
 }
