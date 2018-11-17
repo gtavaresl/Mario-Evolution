@@ -1,5 +1,6 @@
 const numberOfMarios = 500;
-const mutationRate = 0.1;
+const mutationRate = 0.3;
+const mutation = 0.2;
 
 var i;
 var elJugador = [];
@@ -12,6 +13,7 @@ function isEverybodyDead(aKarts) {
     }
     return true;
 }
+
 
 function normalizeFitness(aKarts) {
     //Fazer os pontos serem exponencialmente melhores elevando ao quadrado
@@ -32,8 +34,8 @@ function normalizeFitness(aKarts) {
     return aKarts;
 }
 
-function crossOver(partnerA, partnerB) {
-	var child = partnerA;
+function crossOver(partnerA, partnerB, cloneFunction) {
+	var child = cloneFunction(partnerA);
 	//Chose a point to make crossover
     var cutPoint = Math.floor(randomBetween(1, partnerA.brain.weights_ih.rows-1));
     for (var i=cutPoint+1; i<partnerB.brain.weights_ih.rows; i++){
@@ -43,7 +45,7 @@ function crossOver(partnerA, partnerB) {
 }
 
 var cont = 1;
-function newGeneration(aKarts, oMap) {
+function newGeneration(aKarts, oMap,cloneFunction) {
     console.log('Generation: ', cont);
     cont++;
     var newPopulation = [];
@@ -51,43 +53,24 @@ function newGeneration(aKarts, oMap) {
     aKarts = normalizeFitness(aKarts);
     var Best = bestFitness(aKarts);
     console.log('Best Fitness: ', Best.fitness);
-    Best.speed = 0;
-    Best.speedinc = 0;
-    Best.rotincdir = 0;
-    Best.rotinc = 0;
-    Best.fitness = 0;
-    Best.x = oMap.startpositions[0].x;
-    Best.y = oMap.startpositions[0].y;
-    Best.rotation = oMap.startrotation;
-    Best.isFreezed = 0;
-    for(var i=2; i<aKarts.length; i++){
+    for(var i=1; i<aKarts.length; i++){
         //Pega um objeto baseado no fitness dele, quanto maior o fitness, mais provavel
-        var partnerA = acceptReject(aKarts);
-        var partnerB = acceptReject(aKarts);
-        var newMario;
-        if(partnerA.fitness > partnerB.fitness) newMario = partnerA;
-        else newMario = partnerB;
-        
-        newMario.brain.mutate(mutationRate);
-
-        //Resetar as informações (Novo construtor do objeto)
+        var newMario = cloneFunction(Best);
+        newMario.brain.mutate(mutationRate, mutation);
         newMario.speed = 0;
         newMario.speedinc = 0;
-        newMario.rotincdir = 0;
-        newMario.rotinc = 0;
-        newMario.fitness = 0;
         newMario.x = oMap.startpositions[0].x;
         newMario.y = oMap.startpositions[0].y;
         newMario.rotation = oMap.startrotation;
-        newMario.isFreezed = 0; //The new Mario is not freezed anymore
-        
+        newMario.rotincdir = 0;
+        newMario.rotinc = 0;
+        newMario.fitness = 0;
+        newMario.isFreezed = 0;
         //Adicionar o novo mario no vetor da nova população
         newPopulation[i] = newMario;
     }
     //O kart que eu controlo fica em 0, basta passar essa posicao para o novo vetor
     newPopulation[0] = aKarts[0];
-    newPopulation[1] = Best;
-    
     return newPopulation;
 }
 
@@ -171,10 +154,10 @@ for(i=0; i<numberOfMarios; i++) {
             inputs[4] = this.rotation/360;
             inputs[5] = this.speed;
             let output = this.brain.predict(inputs);
-            if (output[0] > 0.5) {
+            if (output[0] > 0.66) {
                 this.buttonRight();
             }
-            if (output[0] < 0.5) {
+            if (output[0] < 0.33) {
                 this.buttonLeft();
             }
         }, 
