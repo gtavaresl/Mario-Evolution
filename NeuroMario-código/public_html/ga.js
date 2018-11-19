@@ -1,6 +1,7 @@
 const numberOfMarios = 500;
-const mutationRate = 0.3;
+const mutationRate = 0.1;
 const mutation = 0.2;
+const taxaSobrevivenciaBest = 0.1;
 
 
 var contadorPodeGerar = 0;
@@ -56,7 +57,23 @@ function newGeneration(aKarts, oMap, cloneFunction) {
     aKarts = normalizeFitness(aKarts);
     var best = bestFitness(aKarts);
     console.log('Best Fitness: ', best.fitness);
-    for(var i=1; i<aKarts.length; i++){
+
+    //Pegar 10% e repetir o best so que com uma mutação para sair do maximo local
+    for (var i=1; i<aKarts.length*taxaSobrevivenciaBest; i++){
+        newPopulation[i] = cloneFunction(best);
+        newPopulation[i].brain.mutate(mutationRate, mutation);
+        newPopulation[i].speed = 0;
+        newPopulation[i].speedinc = 0;
+        newPopulation[i].x = oMap.startpositions[0].x;
+        newPopulation[i].y = oMap.startpositions[0].y;
+        newPopulation[i].rotation = oMap.startrotation;
+        newPopulation[i].rotincdir = 0;
+        newPopulation[i].rotinc = 0;
+        newPopulation[i].fitness = 0; //#3 Desativar
+        newPopulation[i].isFreezed = 0;
+    }
+
+    for(var i=aKarts.length*taxaSobrevivenciaBest; i<aKarts.length; i++){
         //Pega um objeto baseado no fitness dele, quanto maior o fitness, mais provavel
         var newMario = crossOver(best, aKarts[i],cloneFunction);
         if(aKarts[i] != best) newMario.brain.mutate(mutationRate, mutation);
