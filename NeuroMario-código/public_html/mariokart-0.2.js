@@ -550,6 +550,8 @@ function MarioKart() {
         for (let i=1; i<aKarts.length; i++) {
             if(!(aKarts[i].isFreezed)) {
                 aKarts[i].fitness++;
+                // aKarts[i].fitness += check(aKarts[i].x, aKarts[i].y);
+                // if (i === 10) console.log(check(aKarts[i].x, aKarts[i].y));
             }
 
             aKarts[i].buttonUp();

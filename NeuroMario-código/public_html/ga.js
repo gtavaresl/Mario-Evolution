@@ -1,6 +1,6 @@
 const numberOfMarios = 500;
-const mutationRate = 0.1;
-const mutation = 0.2;
+const mutationRate = 0.5;
+const mutation = 0.05;
 const taxaSobrevivenciaBest = 0.1;
 
 
@@ -61,7 +61,7 @@ function newGeneration(aKarts, oMap, cloneFunction) {
     //Pegar 10% e repetir o best so que com uma mutação para sair do maximo local
     for (var i=1; i<aKarts.length*taxaSobrevivenciaBest; i++){
         newPopulation[i] = cloneFunction(best);
-        newPopulation[i].brain.mutate(mutationRate, mutation);
+        newPopulation[i].brain.mutate(1, mutation);
         newPopulation[i].speed = 0;
         newPopulation[i].speedinc = 0;
         newPopulation[i].x = oMap.startpositions[0].x;
