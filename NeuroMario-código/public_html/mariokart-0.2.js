@@ -566,8 +566,7 @@ function MarioKart() {
             	if(contadorPodeGerar > numberOfMarios){
             		aKarts = newGeneration(aKarts, oMap, cloneFunction); //This new array is not freezed anymore
                     contadorPodeGerar = 0;
-                    oPlayer = aKarts[0];
-                    // console.log(newGeneration[0]);
+                    // oPlayer = aKarts[0]; #3 Ativar
             	}else{
             		contadorPodeGerar++;
             	}
@@ -915,8 +914,14 @@ function MarioKart() {
 
             freeze: function(oMap) {
                 this.speed = 0;
-                this.x = 1000;
-            	this.y = 1000;
+                if (this === oPlayer){
+                    this.x = 1;
+                    this.y = 1;
+                } else {
+                    this.x = 1000;
+            	    this.y = 1000;
+                }
+                
             	this.rotation = oMap.startrotation;
             	this.rotincdir = 0;
             	this.rotinc = 0;

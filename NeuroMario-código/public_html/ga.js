@@ -67,23 +67,24 @@ function newGeneration(aKarts, oMap, cloneFunction) {
         newMario.rotation = oMap.startrotation;
         newMario.rotincdir = 0;
         newMario.rotinc = 0;
-        // newMario.fitness = 0;
+        newMario.fitness = 0; //#3 Desativar
         newMario.isFreezed = 0;
         //Adicionar o novo mario no vetor da nova população
         newPopulation[i] = newMario;
     }
 
     //O kart que eu controlo fica em 0, basta passar essa posicao para o novo vetor
-    // aKarts[0] = bestFitness(newPopulation);
-    // newPopulation[0] = aKarts[0]; //O normal é só ele
-    newPopulation[0] = bestFitness(newPopulation);
-    for (let i=0; i<newPopulation.length; i++){
-        // newPopulation[i].fitness = 0;
-        console.log(newPopulation[i].fitness);
-    }
-    
-    console.log('bora', newPopulation[0].fitness);
+    newPopulation[0] = aKarts[0]; //#3 Desativar
 
+    //#3 PARA MUDAR A VISÃO (Ativar)
+    // newPopulation[0] = bestFitness(newPopulation);
+    // console.log('Meu fitness', newPopulation[0].fitness);
+    // for (let i=0; i<newPopulation.length; i++){
+    //     newPopulation[i].fitness = 0;
+    //     // console.log(newPopulation[i].fitness);
+    // }
+
+    //Free
     for (let i=1; i<aKarts.length; i++) {
         aKarts[i].player = null;
         aKarts[i].sprite = null;
@@ -313,8 +314,13 @@ for(i=0; i<numberOfMarios; i++) {
 
         freeze: function(oMap) {
             this.speed = 0;
-            this.x = 1000;
-            this.y = 1000;
+            // if (this === oPlayer){
+                // this.x = 1;
+                // this.y = 1;
+            // } else {
+                this.x = 1000;
+                this.y = 1000;
+            // }
             this.rotation = oMap.startrotation;
             this.rotincdir = 0;
             this.rotinc = 0;
