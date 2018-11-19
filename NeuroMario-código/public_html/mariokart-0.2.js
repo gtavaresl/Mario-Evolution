@@ -1,3 +1,5 @@
+var podeGerar = false;
+var contadorPodeGerar = 0;
 // ANOTS:
 // O oPlayer é o jogador, e tem um array de todos os jogadores, que é o aPlayers
 //Para saber a posição basta fazer oPlayer.x ou oPlayer.y
@@ -148,7 +150,7 @@ function MarioKart() {
         oMapImg.onload = startGame;
         oMapImg.src = oMap.texture;
     }
-    var fMaxSpeed = 6;
+    var fMaxSpeed = 6*velocidadeDoCreu;
     var fMaxRotInc = 6;
     var fMaxRotTimer = 0;
     var aKarts = [];
@@ -1220,12 +1222,12 @@ function MarioKart() {
 
             // Acceleration function
             buttonUp: function() {
-                this.speedinc = 1;
+                this.speedinc = 1*velocidadeDoCreu;
             },
 
             //Deceleration function
             buttonDown :function() {
-                this.speedinc -= 0.2;
+                this.speedinc -= 0.2*velocidadeDoCreu;
             },
 
             //Turn right

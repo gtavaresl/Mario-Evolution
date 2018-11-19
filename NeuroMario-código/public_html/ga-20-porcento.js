@@ -1,4 +1,4 @@
-const numberOfMarios = 50;
+const numberOfMarios = 1000;
 const mutationRate = 2;
 
 var i;

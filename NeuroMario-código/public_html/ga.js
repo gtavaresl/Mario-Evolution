@@ -1,8 +1,10 @@
+"use strict";
 const numberOfMarios = 500;
 const mutationRate = 0.3;
 const mutation = 0.3;
 var podeGerar = false;
 var contadorPodeGerar = 0;
+const velocidadeDoCreu = 1;
 
 var i;
 var elJugador = [];
@@ -53,7 +55,7 @@ function newGeneration(aKarts, oMap, cloneFunction) {
     cont++;
     var newPopulation = [];
         
-    aKarts = normalizeFitness(aKarts);
+    // aKarts = normalizeFitness(aKarts);
     //Aqui fazemos a copia de todos os karts para um novo vetor, assim não iremos mexer no original
     var aKartsCopy = [];
     for (let i=0; i<aKarts.length; i++) {
@@ -71,7 +73,7 @@ function newGeneration(aKarts, oMap, cloneFunction) {
         var partnerB = aKartsCopy[1];
         // var partnerB = acceptReject(aKarts);
         // var newMario = partnerA;
-        var newMario = crossOver(partnerA, partnerB, cloneFunction);
+        var newMario = crossOver(partnerA, aKarts[i], cloneFunction);
         
         newMario.brain.mutate(mutationRate, mutation);
 
@@ -94,7 +96,22 @@ function newGeneration(aKarts, oMap, cloneFunction) {
     newPopulation[1] = aKartsCopy[1];
     newPopulation[2] = aKartsCopy[2];
     
-    aKarts.splice(0, numberOfMarios);
+    for (let i=1; i<aKarts.length; i++) {
+        aKarts[i].player = null;
+        aKarts[i].sprite = null;
+        aKarts[i].cpu = null;
+        aKarts[i].speed = null;
+        aKarts[i].speedinc = null;
+        aKarts[i].rotincdir = null;
+        aKarts[i].rotinc = null;
+        aKarts[i].fitness = null;
+        aKarts[i].x = null;
+        aKarts[i].y = null;
+        aKarts[i].rotation = null;
+        aKarts[i].isFreezed = null;
+        aKarts[i].brain = null;
+        aKarts[i] = null;
+    }
 
     return newPopulation;
 }
