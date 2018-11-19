@@ -37,8 +37,9 @@ function normalizeFitness(aKarts) {
 }
 
 function crossOver(partnerA, partnerB, cloneFunction) {
-	var child = cloneFunction(partnerA);
-	//Chose a point to make crossover
+    var child = cloneFunction(partnerA);
+    child.fitness = partnerB.fitness;
+    //Chose a point to make crossover
     var cutPoint = Math.floor(randomBetween(1, partnerA.brain.weights_ih.rows-1));
     for (var i=cutPoint+1; i < partnerB.brain.weights_ih.rows; i++){
             child.brain.weights_ih.data[i] = partnerB.brain.weights_ih.data[i];
@@ -47,7 +48,7 @@ function crossOver(partnerA, partnerB, cloneFunction) {
 }
 
 var cont = 1;
-function newGeneration(aKarts, oMap,cloneFunction, Sprite) {
+function newGeneration(aKarts, oMap, cloneFunction) {
     console.log('Generation: ', cont);
     cont++;
     var newPopulation = [];
@@ -66,13 +67,39 @@ function newGeneration(aKarts, oMap,cloneFunction, Sprite) {
         newMario.rotation = oMap.startrotation;
         newMario.rotincdir = 0;
         newMario.rotinc = 0;
-        newMario.fitness = 0;
+        // newMario.fitness = 0;
         newMario.isFreezed = 0;
         //Adicionar o novo mario no vetor da nova população
         newPopulation[i] = newMario;
     }
+
     //O kart que eu controlo fica em 0, basta passar essa posicao para o novo vetor
-    newPopulation[0] = aKarts[0];
+    // aKarts[0] = bestFitness(newPopulation);
+    // newPopulation[0] = aKarts[0]; //O normal é só ele
+    newPopulation[0] = bestFitness(newPopulation);
+    for (let i=0; i<newPopulation.length; i++){
+        // newPopulation[i].fitness = 0;
+        console.log(newPopulation[i].fitness);
+    }
+    
+    console.log('bora', newPopulation[0].fitness);
+
+    for (let i=1; i<aKarts.length; i++) {
+        aKarts[i].player = null;
+        aKarts[i].sprite = null;
+        aKarts[i].cpu = null;
+        aKarts[i].speed = null;
+        aKarts[i].speedinc = null;
+        aKarts[i].rotincdir = null;
+        aKarts[i].rotinc = null;
+        aKarts[i].fitness = null;
+        aKarts[i].x = null;
+        aKarts[i].y = null;
+        aKarts[i].rotation = null;
+        aKarts[i].isFreezed = null;
+        aKarts[i].brain = null;
+        aKarts[i] = null;
+    }
     return newPopulation;
 }
 
@@ -286,8 +313,8 @@ for(i=0; i<numberOfMarios; i++) {
 
         freeze: function(oMap) {
             this.speed = 0;
-            this.x = oMap.startpositions[0].x;
-            this.y = oMap.startpositions[0].y;
+            this.x = 1000;
+            this.y = 1000;
             this.rotation = oMap.startrotation;
             this.rotincdir = 0;
             this.rotinc = 0;

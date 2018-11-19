@@ -540,10 +540,6 @@ function MarioKart() {
 
     // Função renderizar
     function render() {
-        //Não passa aqui
-
-
-        // (posx, posy) should be at (iViewCanvasWidth/2, iViewCanvasHeight - iViewYOffset) on view canvas
         oViewCanvas.width = oViewCanvas.width;
      
 //===================================================================
@@ -568,8 +564,10 @@ function MarioKart() {
 
             if(isEverybodyDead(aKarts)){
             	if(contadorPodeGerar > numberOfMarios){
-            		aKarts = newGeneration(aKarts, oMap, cloneFunction, Sprite); //This new array is not freezed anymore
-            		contadorPodeGerar = 0;
+            		aKarts = newGeneration(aKarts, oMap, cloneFunction); //This new array is not freezed anymore
+                    contadorPodeGerar = 0;
+                    oPlayer = aKarts[0];
+                    // console.log(newGeneration[0]);
             	}else{
             		contadorPodeGerar++;
             	}
@@ -591,7 +589,6 @@ function MarioKart() {
         //oScreenCtx.fillRect(0,0,oScreenCanvas.width,oScreenCanvas.height);
 
 
-        // console.log('aqui passa rapa');
         for (var i = 0; i < aStrips.length; i++) {
             var oStrip = aStrips[i];
             if (iRenderMode == 0) {
@@ -624,8 +621,6 @@ function MarioKart() {
         var iOffsetY = (iHeight - iViewYOffset) * iScreenScale;
         var zIndexBase = 10000;
 
-        //Printar no console
-        // console.log(oPlayer.x);
         for (var i = 0; i < aKarts.length; i++) {
             var oKart = aKarts[i];
             if (oKart != oPlayer) { //oKart.cpu) {
@@ -920,8 +915,8 @@ function MarioKart() {
 
             freeze: function(oMap) {
                 this.speed = 0;
-                this.x = oMap.startpositions[0].x;
-            	this.y = oMap.startpositions[0].y;
+                this.x = 1000;
+            	this.y = 1000;
             	this.rotation = oMap.startrotation;
             	this.rotincdir = 0;
             	this.rotinc = 0;
@@ -986,13 +981,6 @@ function MarioKart() {
     //Para teste não use a direção, o angulo que o jogador está, apenas passe isso para a rede neural. Apenas use a distancia do ponto a reta
     //Distância do ponto a reta
     //recebe a coordenada do jogador, o angulo que ele esta olhando e o objeto com as linhas que ele não pode passar
-    function distancePointLine(oPlayer, oMap) {
-        let x = oPlayer.x;
-        let y = oPlayer.y;
-        let degree = oPlayer.rotation;
-
-
-    }
     
     //Calcula a distância da frente do carro para a "linha" mais próxima
     // function distanceFront
