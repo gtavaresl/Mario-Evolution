@@ -747,7 +747,7 @@ function MarioKart() {
         // decrease speed
         oKart.speed *= 0.9;
         if(areia( oKart.x, oKart.y) == true){
-        	oKart.speed *= 0.6;
+        	// oKart.speed *= 0.6;
     		oKart.fitness-=2;
     	}
     	oKart.fitness*=(1+0.1*check(oKart.x, oKart.y));
