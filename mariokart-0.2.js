@@ -1,11 +1,5 @@
-// ANOTS:
-// O oPlayer é o jogador, e tem um array de todos os jogadores, que é o aPlayers
-//Para saber a posição basta fazer oPlayer.x ou oPlayer.y
-//Omap é o objeto que tem o mapa
-//oPlayer.rotation dá o angulo do jogador em graus. Acompanha o eixo y (para baixo), dai para baixo é 0 graus e depois segue o circulo trigonometrico
-//oBox é a caixa dos valores que o carrinho não pode ir, ele pega o vetor collision
-//
-//O oPlayer é o que vai ser printado na tela, então ele fica na ultima passagem
+////Alunos: Gabriel Nicolau, Gabriell Tavares e Edson 
+
 const imgHeight = 374;
 const imgWidth = 198;
 var cont = 0;
