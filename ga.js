@@ -1,3 +1,5 @@
+//Alunos: Gabriel Nicolau, Gabriell Tavares e Edson 
+
 const numberOfMarios = 500;
 const mutationRate = 0.5;
 const mutation = 0.05;
