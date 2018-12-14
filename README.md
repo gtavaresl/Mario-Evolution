@@ -10,4 +10,4 @@ We just created the AI, the game itself was created by Jacob Seidelin(http://blo
 
 Presentation video (Portuguese - Made in São Paulo University): https://www.youtube.com/watch?v=yb7EKx3WvcQ&feature=youtu.be
 
-Students: Gabriel Nicolau, Gabriell Tavares e Edson 
+Students: Gabriel Nicolau, Gabriell Tavares and Edson 
