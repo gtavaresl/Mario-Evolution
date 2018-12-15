@@ -1,5 +1,3 @@
-//Alunos: Gabriel Nicolau, Gabriell Tavares e Edson 
-
 const numberOfMarios = 500;
 const mutationRate = 0.5;
 const mutation = 0.05;
@@ -297,18 +295,6 @@ for(i=0; i<numberOfMarios; i++) {
                 }
             }
             return minDistance;
-        },
-
-        hit: function(oMap) {
-            let distance = 3;
-            if (this.distanceUp(oMap) < distance || this.distanceBottom(oMap) < distance || 
-                this.distanceLeft(oMap) < distance || this.distanceRight(oMap) < distance ||
-                this.x < 9 || this.x > imgWidth-distance || 
-                this.y < 9 || this.y > imgHeight-distance) { 
-                return true;
-            } else {
-                return false;
-            }
         },
 
         // Acceleration function

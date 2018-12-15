@@ -1,5 +1,11 @@
-////Alunos: Gabriel Nicolau, Gabriell Tavares e Edson 
-
+// ANOTS:
+// O oPlayer é o jogador, e tem um array de todos os jogadores, que é o aPlayers
+//Para saber a posição basta fazer oPlayer.x ou oPlayer.y
+//Omap é o objeto que tem o mapa
+//oPlayer.rotation dá o angulo do jogador em graus. Acompanha o eixo y (para baixo), dai para baixo é 0 graus e depois segue o circulo trigonometrico
+//oBox é a caixa dos valores que o carrinho não pode ir, ele pega o vetor collision
+//
+//O oPlayer é o que vai ser printado na tela, então ele fica na ultima passagem
 const imgHeight = 374;
 const imgWidth = 198;
 var cont = 0;
@@ -12,40 +18,67 @@ function MarioKart() {
     //Passa aqui só uma vez
     var oMaps = {
         "map1": {
-            "texture": "media/map_2.png",
-            "width": 198,
-            "height": 374,
+            "texture": "media/map_1.png",
+            "width": 512,
+            "height": 512,
             "collision": [
-                [72, 60, 59, 241]
-            ],
-            "sand":[
-                [0, 0, 198, 10],
-                [0, 10, 14, 354],
-                [0, 364, 198, 10],
-                [189, 10, 9, 354],
-                [56, 51, 92, 272]
-            ],
-            "checkpoints":[
-            	[128, 62, 70],
-            	[0, 62, 74],
-            	[0, 299, 74],
-            	[128, 299, 79],
-            	[128, 144, 70],
-            	[0, 144, 74],
-            	[0, 244, 75]
+                [84, 80, 49, 212],
+                [68, 276, 20, 56],
+                [290, 3, 220, 47],
+                [132, 146, 98, 42],
+                [133, 105, 55, 46],
+                [220, 170, 62, 22],
+                [136, 188, 208, 60],
+                [0, 0, 36, 33],
+                [2, 408, 36, 33],
+                [250, 3, 43, 31],
+                [336, 244, 35, 32],
+                [132, 244, 36, 32],
+                [352, 274, 24 ,96],
+                [330, 48, 43, 33],
+                [136, 386, 55, 53],
+                [344, 208, 64, 40],
+                [368, 248, 40, 160],
+                [370, 49, 140, 59],
+                [430, 105, 80, 45],
+                [105, 404, 33, 35],
+                [4, 436, 236, 72],
+                [186, 358, 78, 78],
+                [262, 438, 42, 74],
+                [480, 476, 32, 36],
+                [300, 480, 35, 30]
             ],
             "startpositions": [{
-                x: 167,
-                y: 198
+                x: 460,
+                y: 292
             }, {
-                x: 167 - 18,
-                y: 196
+                x: 476 - 18,
+                y: 356 - 18
             }, {
-                x: 167,
-                y: 210
+                x: 476,
+                y: 356 - 24
             }],
+            "sand":[
+            ],
+            "checkpoints":[
+            ],
             "startrotation": 180,
-            "aipoints": [167,257]
+            "aipoints": [
+                [467, 273],
+                [459, 208],
+                [317, 128],
+                [160, 50],
+                [64, 53],
+                [44, 111],
+                [38, 272],
+                [50, 351],
+                [106, 349],
+                [215, 300],
+                [278, 305],
+                [337, 417],
+                [405, 451],
+                [462, 414]
+            ]
         },
         "map2": {
             "texture": "media/map_2.png",
@@ -409,32 +442,6 @@ function MarioKart() {
 
         //FUNÇÃO DESENHAR
         this.draw = function(iX, iY, fScale) {
-
-            //Aqui passa várias vezes
-            // console.log('Up: ' + oPlayer.distanceUp());
-            // console.log('Bottom: ' + oPlayer.distanceBottom());
-            // console.log('Left: ' + oPlayer.distanceLeft());
-            // console.log('Right: ' + oPlayer.distanceRight());
-            // if (oPlayer.hit()) {
-                // oPlayer.think();
-                // console.log('HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIT!!!');
-                //Esse reset nao esta funcionando
-                // resetGame();
-            // }
-            // for (let j=0; j<aKarts.length; j++) {
-            //     if (aKarts[j].hit(j)) {
-            //         console.log('O j = ', j, ' hitou ein');
-            //     }
-            // }
-
-            //Debug
-            // cont++
-            // console.log(oPlayer.x, ' ', oPlayer.y);
-            // if (oPlayer.hit()) {
-            //     console.log('eu hitei ', cont);
-            //     console.log(oPlayer.distanceUp(), ' ', oPlayer.distanceRight(), ' ', oPlayer.distanceBottom(), ' ', oPlayer.distanceLeft());
-            // }
-
             //=====================================
             var bDraw = true;
             if (iY > iHeight * iScreenScale || iY < 6 * iScreenScale) {
@@ -542,9 +549,9 @@ function MarioKart() {
             aKarts[i].buttonUp();
             
             aKarts[i].think(oMap);
-            if (aKarts[i].hit(oMap)) {
+            /*if (canMoveTo(aKarts[i].x,aKarts[i].y) == false) {
                 aKarts[i].isFreezed = 1;
-            }
+            }*/
             if(aKarts[i].isFreezed){
                 aKarts[i].freeze(oMap);
             }
@@ -727,6 +734,7 @@ function MarioKart() {
             oKart.y = fNewPosY;
         }
         else {
+            if(oKart != aKarts[0]) oKart.isFreezed = 1;
             oKart.speed *= -1;
         }
         // decrease speed
@@ -806,7 +814,7 @@ function MarioKart() {
 
             distanceBottom: function(oMap) {
                 //365 é o tamanho na vertical
-                let minDistance = 365 - this.y;
+                let minDistance = oMap.height - 9 - this.y;
                 let x = this.x;
                 let y = this.y;
                 for (var i = 0; i < oMap.collision.length; i++) {
@@ -851,7 +859,7 @@ function MarioKart() {
             distanceRight: function(oMap) {
                 let x = this.x;
                 let y = this.y;
-                let minDistance = 188 - x;
+                let minDistance = oMap.width - 10 - x;
                 for (var i = 0; i < oMap.collision.length; i++) {
                     var oBox = oMap.collision[i];
                     //O jogador precisa estar à direita ou à esquerda da caixa para detectar as linhas, isso evita detecções erradas
@@ -865,18 +873,6 @@ function MarioKart() {
                     }
                 }
                 return minDistance;
-            },
-
-            hit: function(oMap) {
-                let distance = 3;
-                if (this.distanceUp(oMap) < distance || this.distanceBottom(oMap) < distance || 
-                    this.distanceLeft(oMap) < distance || this.distanceRight(oMap) < distance ||
-                    this.x < 9 || this.x > imgWidth-distance || 
-                    this.y < 9 || this.y > imgHeight-distance) { 
-                    return true;
-                } else {
-                    return false;
-                }
             },
 
             // Acceleration function
