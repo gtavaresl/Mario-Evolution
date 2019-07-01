@@ -104,6 +104,7 @@ function newGeneration(aKarts, oMap, cloneFunction) {
     //Free
     for (let i=1; i<aKarts.length; i++) {
         aKarts[i].player = null;
+        aKarts[i].sprite.remove();
         aKarts[i].sprite = null;
         aKarts[i].cpu = null;
         aKarts[i].speed = null;
@@ -200,6 +201,8 @@ for(i=0; i<numberOfMarios; i++) {
             }
             inputs[4] = this.rotation/360;
             inputs[5] = this.speed;
+            inputs[6] = this.x;
+            inputs[7] = this.y;
             let output = this.brain.predict(inputs);
             if (output[0] > 0.66) {
                 this.buttonRight();
@@ -319,13 +322,8 @@ for(i=0; i<numberOfMarios; i++) {
 
         freeze: function(oMap) {
             this.speed = 0;
-            // if (this === oPlayer){
-                // this.x = 1;
-                // this.y = 1;
-            // } else {
-                this.x = 1000;
-                this.y = 1000;
-            // }
+            this.x = oMap.startpositions[0].x;
+            this.y = oMap.startpositions[0].y;
             this.rotation = oMap.startrotation;
             this.rotincdir = 0;
             this.rotinc = 0;
